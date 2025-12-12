@@ -1,0 +1,78 @@
+---
+# Pre-workload tasks
+- name: Get OpenShift Web Console route
+  kubernetes.core.k8s_info:
+    api_version: route.openshift.io/v1
+    kind: Route
+    namespace: openshift-console
+    name: console
+  register: r_console_route
+
+- name: Get ingress domain
+  kubernetes.core.k8s_info:
+    kind: IngressController
+    name: default
+    namespace: openshift-ingress-operator
+    api_version: operator.openshift.io/v1
+  register: r_openshift_ingress_controller
+
+- name: Set openshift domain
+  ansible.builtin.set_fact:
+    r_openshift_subdomain: "{{ r_openshift_ingress_controller.resources[0].status.domain }}"
+
+- name: Get API server URL
+  kubernetes.core.k8s_info:
+    api_version: config.openshift.io/v1
+    kind: Infrastructure
+    name: cluster
+  register: r_api_url
+
+- name: Set API server URL
+  ansible.builtin.set_fact:
+    r_openshift_api_server: "{{ r_api_url.resources[0].status.apiServerURL }}"
+
+# Main workload tasks
+- name: Install OpenShift Gitops
+  ansible.builtin.include_tasks: openshift_gitops.yml
+
+- name: Install OpenShift Pipelines
+  ansible.builtin.include_tasks: openshift_pipelines.yml
+
+- name: Install NooBaa
+  ansible.builtin.include_tasks: noobaa.yml
+
+- name: Install Vault
+  ansible.builtin.include_tasks: vault.yml
+
+- name: Install External Secrets
+  ansible.builtin.include_tasks: external_secrets.yml
+
+- name: Install Gitlab
+  ansible.builtin.include_tasks: gitlab.yml
+
+- name: Install RHBK
+  ansible.builtin.include_tasks: keycloak.yml
+
+- name: Install Quay
+  ansible.builtin.include_tasks: quay.yml
+
+- name: Install RHDH GitOps
+  ansible.builtin.include_tasks: rhdh_gitops.yml
+
+- name: Install Red Hat Developer Hub
+  ansible.builtin.include_tasks: redhat_developer_hub.yml
+
+- name: Install Trusted Artifact Signer
+  ansible.builtin.include_tasks: trusted_artifact_signer.yml
+
+- name: Install Parasol
+  ansible.builtin.include_tasks: parasol.yml
+
+- name: Install Orchestrator
+  ansible.builtin.include_tasks: orchestrator.yml
+
+- name: Install Showroom
+  ansible.builtin.include_tasks: showroom.yml
+
+- name: Install Terminal
+  ansible.builtin.include_tasks: terminal.yml
