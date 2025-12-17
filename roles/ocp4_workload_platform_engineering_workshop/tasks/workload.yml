@@ -7,6 +7,9 @@
     namespace: openshift-console
     name: console
   register: r_console_route
+  retries: 20
+  delay: 3
+  until: r_console_route is not failed
 
 - name: Get ingress domain
   kubernetes.core.k8s_info:
@@ -15,6 +18,9 @@
     namespace: openshift-ingress-operator
     api_version: operator.openshift.io/v1
   register: r_openshift_ingress_controller
+  retries: 20
+  delay: 3
+  until: r_openshift_ingress_controller is not failed
 
 - name: Set openshift domain
   ansible.builtin.set_fact:
@@ -26,6 +32,9 @@
     kind: Infrastructure
     name: cluster
   register: r_api_url
+  retries: 20
+  delay: 3
+  until: r_api_url is not failed
 
 - name: Set API server URL
   ansible.builtin.set_fact:
