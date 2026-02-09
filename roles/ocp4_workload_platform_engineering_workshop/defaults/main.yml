@@ -199,9 +199,10 @@ ocp4_workload_platform_engineering_workshop_terminal_install: true
 
 ocp4_workload_platform_engineering_workshop_gitlab_namespace: gitlab
 
-ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo: https://github.com/redhat-pe-workshop/agnosticg.git
-ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo_path: charts/gitlab
-ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo_tag: orchestrator
+ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
+ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo_path: gitlab
+# ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo_tag: main
+ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo_tag: dev
 ocp4_workload_platform_engineering_workshop_gitlab_gitops_name: gitlab
 ocp4_workload_platform_engineering_workshop_gitlab_gitops_namespace: openshift-gitops
 
@@ -262,6 +263,14 @@ ocp4_workload_platform_engineering_workshop_quay_admin_user_password: "{{ common
 ocp4_workload_platform_engineering_workshop_quay_organizations:
   - parasol
 
+ocp4_workload_platform_engineering_workshop_quay_developer_users:
+  - username: dev1
+    email: dev1@rhdh.com
+    password: "{{ common_password }}"
+  - username: dev2
+    email: dev2@rhdh.com
+    password: "{{ common_password }}"
+
 # ------------------------------------------------
 # Vault
 # ------------------------------------------------
@@ -269,9 +278,10 @@ ocp4_workload_platform_engineering_workshop_quay_organizations:
 ocp4_workload_platform_engineering_workshop_vault_application_namespace: openshift-gitops
 ocp4_workload_platform_engineering_workshop_vault_application_name: vault
 ocp4_workload_platform_engineering_workshop_vault_namespace: vault
-ocp4_workload_platform_engineering_workshop_vault_gitops_repo: https://github.com/redhat-pe-workshop/agnosticg.git
-ocp4_workload_platform_engineering_workshop_vault_gitops_repo_tag: pew-vault
-ocp4_workload_platform_engineering_workshop_vault_gitops_repo_path: charts/hashicorp-vault
+ocp4_workload_platform_engineering_workshop_vault_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
+# ocp4_workload_platform_engineering_workshop_vault_gitops_repo_tag: main
+ocp4_workload_platform_engineering_workshop_vault_gitops_repo_tag: dev
+ocp4_workload_platform_engineering_workshop_vault_gitops_repo_path: hashicorp-vault
 
 ocp4_workload_platform_engineering_workshop_vault_name: vault
 
