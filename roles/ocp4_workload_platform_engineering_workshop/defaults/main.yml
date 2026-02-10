@@ -262,6 +262,16 @@ ocp4_workload_platform_engineering_workshop_rhdh_namespace: backstage
 ocp4_workload_platform_engineering_workshop_rhdh_psql_password: password
 
 # ------------------------------------------------
+# Orchestrator
+# ------------------------------------------------
+
+ocp4_workload_platform_engineering_workshop_orchestrator_application_name: orchestrator
+ocp4_workload_platform_engineering_workshop_orchestrator_namespace: >-
+  {{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}
+ocp4_workload_platform_engineering_workshop_orchestrator_token: >-
+  {{ lookup('ansible.builtin.password', '/tmp/passwordfile-orchestrator-token', chars=['ascii_letters', 'digits'], length=24) }}
+
+# ------------------------------------------------
 # Red Hat Trusted Artifact Signer
 # ------------------------------------------------
 

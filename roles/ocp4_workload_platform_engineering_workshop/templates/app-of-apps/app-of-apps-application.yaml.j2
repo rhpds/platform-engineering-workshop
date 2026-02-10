@@ -58,6 +58,8 @@ spec:
             rhdh:
               argocdPassword: "{{ openshift_gitops_admin_password }}"
               postgresqlPassword: "{{ ocp4_workload_platform_engineering_workshop_rhdh_psql_password }}"
+            orchestrator:
+              token: "{{ ocp4_workload_platform_engineering_workshop_orchestrator_token }}"
             common:
               password: "{{ common_password }}"
 
@@ -162,3 +164,14 @@ spec:
           rootCert:
             email: {{ ocp4_workload_platform_engineering_workshop_rhtas_root_cert_email }}
             org: {{ ocp4_workload_platform_engineering_workshop_rhtas_root_cert_org }}
+
+        orchestrator:
+          name: {{ ocp4_workload_platform_engineering_workshop_orchestrator_application_name }}
+          namespace: {{ ocp4_workload_platform_engineering_workshop_orchestrator_namespace }}
+          backstage:
+            backend:
+              url: https://backstage-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
+          openshift:
+            url: {{ r_openshift_api_server }}
+          gitlab:
+            url: https://{{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
