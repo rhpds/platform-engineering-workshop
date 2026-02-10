@@ -1,0 +1,53 @@
+---
+
+- name: Get child ArgoCD Applications managed by app-of-apps
+  kubernetes.core.k8s_info:
+    api_version: argoproj.io/v1alpha1
+    kind: Application
+    namespace: openshift-gitops
+  register: r_argocd_apps
+  retries: 5
+  delay: 10
+  until: r_argocd_apps is not failed
+
+- name: Filter to app-of-apps children
+  ansible.builtin.set_fact:
+    r_child_app_names: >-
+      {{ r_argocd_apps.resources
+        | selectattr('metadata.annotations', 'defined')
+        | selectattr('metadata.annotations.argocd.argoproj.io/tracking-id', 'defined')
+        | selectattr('metadata.annotations.argocd.argoproj.io/tracking-id', 'match', '^app-of-apps:')
+        | map(attribute='metadata.name')
+        | list }}
+
+- name: Print discovered child Applications
+  ansible.builtin.debug:
+    msg: "Found {{ r_child_app_names | length }} child Applications: {{ r_child_app_names }}"
+
+- name: Wait for child ArgoCD Applications to be Synced and Healthy
+  kubernetes.core.k8s_info:
+    api_version: argoproj.io/v1alpha1
+    kind: Application
+    namespace: openshift-gitops
+  register: r_argocd_apps_status
+  retries: 60
+  delay: 30
+  until:
+    - r_argocd_apps_status.resources is defined
+    - r_argocd_apps_status.resources
+      | selectattr('metadata.name', 'in', r_child_app_names)
+      | rejectattr('status.sync.status', 'equalto', 'Synced')
+      | list
+      | length == 0
+    - r_argocd_apps_status.resources
+      | selectattr('metadata.name', 'in', r_child_app_names)
+      | rejectattr('status.health.status', 'equalto', 'Healthy')
+      | list
+      | length == 0
+
+- name: Print final Application status
+  ansible.builtin.debug:
+    msg: "{{ item.metadata.name }}: sync={{ item.status.sync.status }} health={{ item.status.health.status }}"
+  loop: "{{ r_argocd_apps_status.resources | selectattr('metadata.name', 'in', r_child_app_names) | list }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"

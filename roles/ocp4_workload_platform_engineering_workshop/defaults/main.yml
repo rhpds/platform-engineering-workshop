@@ -1,7 +1,17 @@
 ---
 # ------------------------------------------------
+# App-of-apps GitOps source
+# ------------------------------------------------
+
+ocp4_workload_platform_engineering_workshop_gitops_repo: https://github.com/redhat-pe-workshop/developer-hub-config.git
+ocp4_workload_platform_engineering_workshop_gitops_repo_tag: main
+
+# ------------------------------------------------
 # OpenShift Gitops
 # ------------------------------------------------
+
+# set to false to skip GitOps operator install (e.g. if already installed)
+ocp4_workload_platform_engineering_workshop_openshift_gitops_install: true
 
 ocp4_workload_platform_engineering_workshop_openshift_gitops_operator_channel: latest
 ocp4_workload_platform_engineering_workshop_openshift_gitops_operator_automatic_install_plan_approval: true
@@ -144,33 +154,13 @@ ocp4_workload_platform_engineering_workshop_openshift_gitops_resource_customizat
 
       return hs
 
-# e.g.
-# openshift_gitops_resource_customizations: |
-  # argoproj.io/Application:
-  #   health.lua: |
-  #     hs = {}
-  #     hs.status = "Progressing"
-  #     hs.message = ""
-  #     if obj.status ~= nil then
-  #       if obj.status.health ~= nil then
-  #         hs.status = obj.status.health.status
-  #         hs.message = obj.status.health.message
-  #       end
-  #     end
-  #     return hs
-
 ocp4_workload_platform_engineering_workshop_openshift_gitops_ignore_differences: {}
 
 # ------------------------------------------------
 # OpenShift Pipelines
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_openshift_pipelines_application_namespace: openshift-gitops
-ocp4_workload_platform_engineering_workshop_openshift_pipelines_application_name: openshift-pipelines
 ocp4_workload_platform_engineering_workshop_openshift_pipelines_namespace: openshift-operators
-ocp4_workload_platform_engineering_workshop_openshift_pipelines_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_openshift_pipelines_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_openshift_pipelines_gitops_repo_path: openshift-pipelines
 
 # ------------------------------------------------
 # NooBaa
@@ -178,15 +168,8 @@ ocp4_workload_platform_engineering_workshop_openshift_pipelines_gitops_repo_path
 
 # set to false when deploying on a cluster with ODF installed
 ocp4_workload_platform_engineering_workshop_noobaa_install: true
-ocp4_workload_platform_engineering_workshop_noobaa_application_namespace: openshift-gitops
-ocp4_workload_platform_engineering_workshop_noobaa_application_name: noobaa
 ocp4_workload_platform_engineering_workshop_noobaa_namespace: openshift-storage
-ocp4_workload_platform_engineering_workshop_noobaa_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_noobaa_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_noobaa_gitops_repo_path: noobaa
-
 ocp4_workload_platform_engineering_workshop_noobaa_name: noobaa
-
 
 # ------------------------------------------------
 # Web Terminal
@@ -198,12 +181,7 @@ ocp4_workload_platform_engineering_workshop_terminal_install: true
 # ------------------------------------------------
 
 ocp4_workload_platform_engineering_workshop_gitlab_namespace: gitlab
-
-ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo_path: gitlab
-ocp4_workload_platform_engineering_workshop_gitlab_gitops_repo_tag: main
 ocp4_workload_platform_engineering_workshop_gitlab_gitops_name: gitlab
-ocp4_workload_platform_engineering_workshop_gitlab_gitops_namespace: openshift-gitops
 
 ocp4_workload_platform_engineering_workshop_gitlab_config_smtp_host:
   smtp.gitlab-{{ ocp4_workload_platform_engineering_workshop_gitlab_namespace }}.{{ r_openshift_subdomain }}
@@ -220,17 +198,12 @@ ocp4_workload_platform_engineering_workshop_gitlab_users_password: "{{ common_pa
 # ------------------------------------------------
 
 ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_name: backstage
-ocp4_workload_platform_engineering_workshop_rhbk_application_namespace: openshift-gitops
 ocp4_workload_platform_engineering_workshop_rhbk_application_name: keycloak
 ocp4_workload_platform_engineering_workshop_rhbk_namespace: keycloak
-ocp4_workload_platform_engineering_workshop_rhbk_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_rhbk_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_rhbk_gitops_repo_path: keycloak
 
 ocp4_workload_platform_engineering_workshop_rhbk_cr_name: keycloak
 ocp4_workload_platform_engineering_workshop_rhbk_external_access: false
 ocp4_workload_platform_engineering_workshop_rhbk_host: sso
-ocp4_workload_platform_engineering_workshop_rhbk_max_time_to_wait: 600000
 
 ocp4_workload_platform_engineering_workshop_rhbk_realm_backstage_name: backstage
 
@@ -248,12 +221,8 @@ ocp4_workload_platform_engineering_workshop_rhbk_user_password: "{{ common_passw
 # Quay
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_quay_application_namespace: openshift-gitops
 ocp4_workload_platform_engineering_workshop_quay_application_name: quay
 ocp4_workload_platform_engineering_workshop_quay_namespace: quay-registry
-ocp4_workload_platform_engineering_workshop_quay_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_quay_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_quay_gitops_repo_path: quay
 
 ocp4_workload_platform_engineering_workshop_quay_registry_host: "quay.{{ r_openshift_subdomain }}"
 ocp4_workload_platform_engineering_workshop_quay_admin_user: quayadmin
@@ -262,51 +231,25 @@ ocp4_workload_platform_engineering_workshop_quay_admin_user_password: "{{ common
 ocp4_workload_platform_engineering_workshop_quay_organizations:
   - parasol
 
-ocp4_workload_platform_engineering_workshop_quay_developer_users:
-  - username: dev1
-    email: dev1@rhdh.com
-    password: "{{ common_password }}"
-  - username: dev2
-    email: dev2@rhdh.com
-    password: "{{ common_password }}"
-
 # ------------------------------------------------
 # Vault
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_vault_application_namespace: openshift-gitops
-ocp4_workload_platform_engineering_workshop_vault_application_name: vault
 ocp4_workload_platform_engineering_workshop_vault_namespace: vault
-ocp4_workload_platform_engineering_workshop_vault_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_vault_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_vault_gitops_repo_path: hashicorp-vault
-
 ocp4_workload_platform_engineering_workshop_vault_name: vault
-
 ocp4_workload_platform_engineering_workshop_vault_auth_namespace: default
 
 # ------------------------------------------------
 # External Secrets
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_external_secrets_application_namespace: openshift-gitops
-ocp4_workload_platform_engineering_workshop_external_secrets_application_name: external-secrets
 ocp4_workload_platform_engineering_workshop_external_secrets_namespace: external-secrets
-ocp4_workload_platform_engineering_workshop_external_secrets_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_external_secrets_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_external_secrets_gitops_repo_path: external-secrets
 
 # ------------------------------------------------
 # RHDH GitOps
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_rhdh_gitops_application_namespace: openshift-gitops
-ocp4_workload_platform_engineering_workshop_rhdh_gitops_application_name: rhdh-gitops
 ocp4_workload_platform_engineering_workshop_rhdh_gitops_namespace: rhdh-gitops
-ocp4_workload_platform_engineering_workshop_rhdh_gitops_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_rhdh_gitops_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_rhdh_gitops_gitops_repo_path: gitops
-
 ocp4_workload_platform_engineering_workshop_rhdh_gitops_name: rhdh-gitops
 ocp4_workload_platform_engineering_workshop_rhdh_gitops_password: "{{ common_password }}"
 
@@ -315,56 +258,18 @@ ocp4_workload_platform_engineering_workshop_rhdh_gitops_password: "{{ common_pas
 # ------------------------------------------------
 
 ocp4_workload_platform_engineering_workshop_rhdh_argo_application_name: backstage-bootstrap
-ocp4_workload_platform_engineering_workshop_rhdh_argo_application_namespace: openshift-gitops
 ocp4_workload_platform_engineering_workshop_rhdh_namespace: backstage
-
-ocp4_workload_platform_engineering_workshop_rhdh_helm_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_rhdh_helm_repo_tag: main
-ocp4_workload_platform_engineering_workshop_rhdh_helm_repo_path: redhat-developer-hub
-
 ocp4_workload_platform_engineering_workshop_rhdh_psql_password: password
-
-ocp4_workload_platform_engineering_workshop_rhdh_namespace_sa_token: default
-
-ocp4_workload_platform_engineering_workshop_rhdh_orchestrator_token:
-  "{{ lookup('ansible.builtin.password', '/dev/null', chars=['ascii_letters'], length=24) }}"
 
 # ------------------------------------------------
 # Red Hat Trusted Artifact Signer
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_rhtas_application_namespace: openshift-gitops
 ocp4_workload_platform_engineering_workshop_rhtas_application_name: trusted-artifact-signer
 ocp4_workload_platform_engineering_workshop_rhtas_namespace: trusted-artifact-signer
-ocp4_workload_platform_engineering_workshop_rhtas_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_rhtas_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_rhtas_gitops_repo_path: rhtas
 
 ocp4_workload_platform_engineering_workshop_rhtas_instance_name: securesign
 ocp4_workload_platform_engineering_workshop_rhtas_oidc_issuer:
   "{{ ocp4_workload_platform_engineering_workshop_rhbk_host }}.{{ r_openshift_subdomain }}/realms/{{ ocp4_workload_platform_engineering_workshop_rhbk_realm_backstage_name }}" # yamllint disable-line rule:line-length
 ocp4_workload_platform_engineering_workshop_rhtas_root_cert_email: admin@rhdemo.com
 ocp4_workload_platform_engineering_workshop_rhtas_root_cert_org: Parasol
-
-# ------------------------------------------------
-# Parasol
-# ------------------------------------------------
-
-ocp4_workload_platform_engineering_workshop_parasol_application_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_parasol_application_repo_tag: main
-ocp4_workload_platform_engineering_workshop_parasol_application_repo_path: parasol
-ocp4_workload_platform_engineering_workshop_parasol_application_name: parasol
-ocp4_workload_platform_engineering_workshop_parasol_application_namespace: openshift-gitops
-ocp4_workload_platform_engineering_workshop_parasol_namespace: default
-
-# ------------------------------------------------
-# Orchestrator
-# ------------------------------------------------
-
-ocp4_workload_platform_engineering_workshop_orchestrator_application_namespace: openshift-gitops
-ocp4_workload_platform_engineering_workshop_orchestrator_application_name: orchestrator
-# Since RHDH 1.8, Orchestrator is deployed in the same namespace as the Red Hat Developer Hub by default
-ocp4_workload_platform_engineering_workshop_orchestrator_namespace: backstage
-ocp4_workload_platform_engineering_workshop_orchestrator_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
-ocp4_workload_platform_engineering_workshop_orchestrator_gitops_repo_tag: main
-ocp4_workload_platform_engineering_workshop_orchestrator_gitops_repo_path: orchestrator
