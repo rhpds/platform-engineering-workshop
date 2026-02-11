@@ -3,7 +3,7 @@
 # App-of-apps GitOps source
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_gitops_repo: https://github.com/redhat-pe-workshop/developer-hub-config.git
+ocp4_workload_platform_engineering_workshop_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
 ocp4_workload_platform_engineering_workshop_gitops_repo_tag: main
 
 # ------------------------------------------------
