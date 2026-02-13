@@ -272,6 +272,18 @@ ocp4_workload_platform_engineering_workshop_orchestrator_token: >-
   {{ lookup('ansible.builtin.password', '/tmp/passwordfile-orchestrator-token', chars=['ascii_letters', 'digits'], length=24) }}
 
 # ------------------------------------------------
+# OpenShift Dev Spaces
+# ------------------------------------------------
+
+ocp4_workload_platform_engineering_workshop_devspaces_install: true
+ocp4_workload_platform_engineering_workshop_devspaces_name: devspaces
+ocp4_workload_platform_engineering_workshop_devspaces_namespace: openshift-devspaces
+
+ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_name: devspaces
+ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_secret:
+  "{{ lookup('ansible.builtin.password', '/tmp/passwordfile-client-devspaces', chars=['ascii_letters', 'digits'], length=32) }}"
+
+# ------------------------------------------------
 # Red Hat Trusted Artifact Signer
 # ------------------------------------------------
 

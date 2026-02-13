@@ -55,6 +55,7 @@ spec:
               clientId: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_name }}
               clientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_secret }}"
               pluginClientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_secret }}"
+              devspacesClientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_secret }}"
             rhdh:
               argocdPassword: "{{ openshift_gitops_admin_password }}"
               postgresqlPassword: "{{ ocp4_workload_platform_engineering_workshop_rhdh_psql_password }}"
@@ -111,6 +112,11 @@ spec:
             backstagePlugin:
               name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_name }}
               secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_secret }}"
+            devspaces:
+              name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_name }}
+              redirectUri: "https://devspaces.{{ r_openshift_subdomain }}/*"
+              webOrigin: "https://devspaces.{{ r_openshift_subdomain }}"
+              secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_secret }}"
           users:
             password: "{{ ocp4_workload_platform_engineering_workshop_rhbk_user_password }}"
 
@@ -155,6 +161,11 @@ spec:
               values:
                 git:
                   host: {{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
+
+        devspaces:
+          enabled: {{ ocp4_workload_platform_engineering_workshop_devspaces_install }}
+          name: {{ ocp4_workload_platform_engineering_workshop_devspaces_name }}
+          namespace: {{ ocp4_workload_platform_engineering_workshop_devspaces_namespace }}
 
         rhtas:
           name: {{ ocp4_workload_platform_engineering_workshop_rhtas_application_name }}
