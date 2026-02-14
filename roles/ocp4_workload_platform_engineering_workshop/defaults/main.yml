@@ -279,9 +279,12 @@ ocp4_workload_platform_engineering_workshop_devspaces_install: true
 ocp4_workload_platform_engineering_workshop_devspaces_name: devspaces
 ocp4_workload_platform_engineering_workshop_devspaces_namespace: openshift-devspaces
 
-ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_name: devspaces
-ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_secret:
-  "{{ lookup('ansible.builtin.password', '/tmp/passwordfile-client-devspaces', chars=['ascii_letters', 'digits'], length=32) }}"
+ocp4_workload_platform_engineering_workshop_rhbk_client_openshift_name: openshift
+ocp4_workload_platform_engineering_workshop_rhbk_client_openshift_secret:
+  "{{ lookup('ansible.builtin.password', '/tmp/passwordfile-client-openshift', chars=['ascii_letters', 'digits'], length=32) }}"
+
+ocp4_workload_platform_engineering_workshop_openshift_oauth_name: openshift-oauth
+ocp4_workload_platform_engineering_workshop_openshift_oauth_namespace: openshift-config
 
 # ------------------------------------------------
 # Red Hat Trusted Artifact Signer

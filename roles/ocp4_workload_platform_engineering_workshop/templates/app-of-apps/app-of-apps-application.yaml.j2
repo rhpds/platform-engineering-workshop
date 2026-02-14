@@ -55,7 +55,7 @@ spec:
               clientId: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_name }}
               clientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_secret }}"
               pluginClientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_secret }}"
-              devspacesClientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_secret }}"
+              openshiftClientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_openshift_secret }}"
             rhdh:
               argocdPassword: "{{ openshift_gitops_admin_password }}"
               postgresqlPassword: "{{ ocp4_workload_platform_engineering_workshop_rhdh_psql_password }}"
@@ -112,11 +112,10 @@ spec:
             backstagePlugin:
               name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_name }}
               secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_secret }}"
-            devspaces:
-              name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_name }}
-              redirectUri: "https://devspaces.{{ r_openshift_subdomain }}/*"
-              webOrigin: "https://devspaces.{{ r_openshift_subdomain }}"
-              secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_devspaces_secret }}"
+            openshift:
+              name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_openshift_name }}
+              redirectUri: "https://oauth-openshift.{{ r_openshift_subdomain }}/oauth2callback/developers"
+              secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_openshift_secret }}"
           users:
             password: "{{ ocp4_workload_platform_engineering_workshop_rhbk_user_password }}"
 
@@ -161,6 +160,10 @@ spec:
               values:
                 git:
                   host: {{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
+
+        openshiftOAuth:
+          name: {{ ocp4_workload_platform_engineering_workshop_openshift_oauth_name }}
+          namespace: {{ ocp4_workload_platform_engineering_workshop_openshift_oauth_namespace }}
 
         devspaces:
           enabled: {{ ocp4_workload_platform_engineering_workshop_devspaces_install }}
