@@ -126,6 +126,7 @@ spec:
           adminUser: {{ ocp4_workload_platform_engineering_workshop_quay_admin_user }}
           adminUserPassword: "{{ ocp4_workload_platform_engineering_workshop_quay_admin_user_password }}"
           organizations: {{ ocp4_workload_platform_engineering_workshop_quay_organizations }}
+          users: {{ ocp4_workload_platform_engineering_workshop_quay_users | to_json }}
 
         rhdhGitops:
           name: {{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_name }}
