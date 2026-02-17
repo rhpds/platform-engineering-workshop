@@ -63,6 +63,9 @@ spec:
               token: "{{ ocp4_workload_platform_engineering_workshop_orchestrator_token }}"
             common:
               password: "{{ common_password }}"
+            litellm:
+              apiUrl: "{{ ocp4_workload_platform_engineering_workshop_litellm_api_url }}"
+              apiKey: "{{ ocp4_workload_platform_engineering_workshop_litellm_api_key }}"
 
         externalSecrets:
           name: external-secrets

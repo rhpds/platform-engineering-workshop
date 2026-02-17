@@ -231,6 +231,15 @@ ocp4_workload_platform_engineering_workshop_quay_admin_user_password: "{{ common
 ocp4_workload_platform_engineering_workshop_quay_organizations:
   - parasol
 
+# ------------------------------------------------
+# LLM / LiteLLM
+# ------------------------------------------------
+
+ocp4_workload_platform_engineering_workshop_litellm_api_url: >-
+  {{ lookup('agnosticd_user_data', 'litellm_api_base_url') | default('') }}
+ocp4_workload_platform_engineering_workshop_litellm_api_key: >-
+  {{ lookup('agnosticd_user_data', 'litellm_virtual_key') | default('') }}
+
 ocp4_workload_platform_engineering_workshop_quay_users:
   - username: dev1
     email: dev1@rhdh.com
