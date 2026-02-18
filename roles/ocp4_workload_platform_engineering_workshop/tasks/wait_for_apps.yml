@@ -1,14 +1,21 @@
 ---
 
-- name: Get child ArgoCD Applications managed by app-of-apps
+- name: Wait for child ArgoCD Applications to be created by app-of-apps
   kubernetes.core.k8s_info:
     api_version: argoproj.io/v1alpha1
     kind: Application
     namespace: openshift-gitops
   register: r_argocd_apps
-  retries: 5
+  retries: 30
   delay: 10
-  until: r_argocd_apps is not failed
+  until:
+    - r_argocd_apps is not failed
+    - r_argocd_apps.resources
+      | selectattr('metadata.annotations', 'defined')
+      | selectattr('metadata.annotations.argocd.argoproj.io/tracking-id', 'defined')
+      | selectattr('metadata.annotations.argocd.argoproj.io/tracking-id', 'match', '^app-of-apps:')
+      | list
+      | length > 0
 
 - name: Filter to app-of-apps children
   ansible.builtin.set_fact:
