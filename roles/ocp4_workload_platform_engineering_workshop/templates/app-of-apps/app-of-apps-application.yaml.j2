@@ -66,6 +66,8 @@ spec:
             litellm:
               apiUrl: "{{ ocp4_workload_platform_engineering_workshop_litellm_api_url }}"
               apiKey: "{{ ocp4_workload_platform_engineering_workshop_litellm_api_key }}"
+            kafka:
+              userPassword: "{{ common_password }}"
 
         externalSecrets:
           name: external-secrets
@@ -182,6 +184,11 @@ spec:
           rootCert:
             email: {{ ocp4_workload_platform_engineering_workshop_rhtas_root_cert_email }}
             org: {{ ocp4_workload_platform_engineering_workshop_rhtas_root_cert_org }}
+
+        amqStreams:
+          enabled: true
+          name: amq-streams
+          namespace: kafka
 
         orchestrator:
           name: {{ ocp4_workload_platform_engineering_workshop_orchestrator_application_name }}
