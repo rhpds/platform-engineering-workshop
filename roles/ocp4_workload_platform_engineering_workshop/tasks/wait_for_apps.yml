@@ -41,11 +41,10 @@
       | rejectattr('status.sync.status', 'equalto', 'Synced')
       | list
       | length == 0
-    # TODO: Uncomment when deployment is stable
-    # - r_argocd_apps_status.resources
-    #   | rejectattr('status.health.status', 'equalto', 'Healthy')
-    #   | list
-    #   | length == 0
+    - r_argocd_apps_status.resources
+      | rejectattr('status.health.status', 'equalto', 'Healthy')
+      | list
+      | length == 0
 
 - name: Print final Application status
   ansible.builtin.debug:
