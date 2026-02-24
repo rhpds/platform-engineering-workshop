@@ -38,17 +38,24 @@
   until:
     - r_argocd_apps_status.resources is defined
     - r_argocd_apps_status.resources
+      | selectattr('status', 'defined')
+      | selectattr('status.sync', 'defined')
+      | selectattr('status.health', 'defined')
+      | length == r_argocd_apps_status.resources | length
+    - r_argocd_apps_status.resources
+      | selectattr('status', 'defined')
       | rejectattr('status.sync.status', 'equalto', 'Synced')
       | list
       | length == 0
     - r_argocd_apps_status.resources
+      | selectattr('status', 'defined')
       | rejectattr('status.health.status', 'equalto', 'Healthy')
       | list
       | length == 0
 
 - name: Print final Application status
   ansible.builtin.debug:
-    msg: "{{ item.metadata.name }}: sync={{ item.status.sync.status }} health={{ item.status.health.status }}"
+    msg: "{{ item.metadata.name }}: sync={{ item.status.sync.status | default('unknown') }} health={{ item.status.health.status | default('unknown') }}"
   loop: "{{ r_argocd_apps_status.resources }}"
   loop_control:
     label: "{{ item.metadata.name }}"
