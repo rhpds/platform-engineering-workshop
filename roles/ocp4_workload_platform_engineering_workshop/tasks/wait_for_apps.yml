@@ -37,8 +37,8 @@
     kind: Application
     namespace: openshift-gitops
   register: r_argocd_apps_status
-  retries: 60
-  delay: 30
+  retries: 30
+  delay: 60
   until:
     - r_argocd_apps_status.resources is defined
     - r_argocd_apps_status.resources
