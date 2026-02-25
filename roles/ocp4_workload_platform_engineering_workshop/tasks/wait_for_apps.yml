@@ -52,10 +52,24 @@
       | rejectattr('status.health.status', 'equalto', 'Healthy')
       | list
       | length == 0
+  ignore_errors: true
 
-- name: Print final Application status
-  ansible.builtin.debug:
-    msg: "{{ item.metadata.name }}: sync={{ item.status.sync.status | default('unknown') }} health={{ item.status.health.status | default('unknown') }}"
-  loop: "{{ r_argocd_apps_status.resources }}"
-  loop_control:
-    label: "{{ item.metadata.name }}"
+- name: Report unhealthy Applications
+  when: r_argocd_apps_status is failed
+  block:
+    - name: Collect unhealthy Application names
+      ansible.builtin.set_fact:
+        r_unhealthy_apps: >-
+          {{ r_argocd_apps_status.resources
+            | default([])
+            | selectattr('status', 'defined')
+            | rejectattr('status.health.status', 'equalto', 'Healthy')
+            | map(attribute='metadata.name')
+            | list }}
+
+    - name: Warn about unhealthy Applications
+      ansible.builtin.debug:
+        msg: >-
+          WARNING: Timed out waiting for all Applications to be Synced and Healthy.
+          Unhealthy apps: {{ r_unhealthy_apps | default('unknown') }}.
+          Deployment will continue — these apps may still converge.
