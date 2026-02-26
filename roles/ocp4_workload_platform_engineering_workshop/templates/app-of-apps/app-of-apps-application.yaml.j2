@@ -133,6 +133,22 @@ spec:
           organizations: {{ ocp4_workload_platform_engineering_workshop_quay_organizations }}
           users: {{ ocp4_workload_platform_engineering_workshop_quay_users | to_json }}
 
+        developerHub:
+          name: developer-hub
+          namespace: {{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}
+          config:
+            backstage:
+              host: backstage-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
+            gitlab:
+              host: {{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
+            argocd:
+              host: {{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_name }}-server-{{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_namespace }}.{{ r_openshift_subdomain }}
+            kubernetes:
+              apiUrl: {{ r_openshift_api_server }}
+          application:
+            git:
+              host: {{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
+
         rhdhGitops:
           name: {{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_name }}
           namespace: {{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_namespace }}
