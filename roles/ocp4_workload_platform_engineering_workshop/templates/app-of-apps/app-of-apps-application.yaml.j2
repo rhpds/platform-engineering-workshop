@@ -68,6 +68,9 @@ spec:
               apiKey: "{{ ocp4_workload_platform_engineering_workshop_litellm_api_key }}"
             kafka:
               userPassword: "{{ common_password }}"
+            tpa:
+              cliClientSecret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_tpacli_secret }}"
+
 
         externalSecrets:
           name: external-secrets
@@ -111,8 +114,8 @@ spec:
           client:
             backstage:
               name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_name }}
-              redirectUri: https://backstage-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}/api/auth/oidc/handler/frame
-              webOrigin: https://backstage-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
+              redirectUri: ""
+              webOrigin: ""
               secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_secret }}"
             backstagePlugin:
               name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_name }}
@@ -121,6 +124,8 @@ spec:
               name: {{ ocp4_workload_platform_engineering_workshop_rhbk_client_openshift_name }}
               redirectUri: "https://oauth-openshift.{{ r_openshift_subdomain }}/oauth2callback/developers"
               secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_openshift_secret }}"
+            tpaCli:
+              secret: "{{ ocp4_workload_platform_engineering_workshop_rhbk_client_tpacli_secret }}"
           users:
             password: "{{ ocp4_workload_platform_engineering_workshop_rhbk_user_password }}"
 
@@ -135,19 +140,26 @@ spec:
 
         developerHub:
           name: developer-hub
-          namespace: {{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}
+          namespace: {{ ocp4_workload_platform_engineering_workshop_developer_hub_namespace }}
           config:
             backstage:
-              host: backstage-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
+              host: backstage-developer-hub-{{ ocp4_workload_platform_engineering_workshop_developer_hub_namespace }}.{{ r_openshift_subdomain }}
             gitlab:
               host: {{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
             argocd:
               host: {{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_name }}-server-{{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_namespace }}.{{ r_openshift_subdomain }}
             kubernetes:
               apiUrl: {{ r_openshift_api_server }}
+            keycloak:
+              host: {{ ocp4_workload_platform_engineering_workshop_rhbk_host }}.{{ r_openshift_subdomain }}
+              realm: {{ ocp4_workload_platform_engineering_workshop_rhbk_realm_backstage_name }}
+              loginRealm: {{ ocp4_workload_platform_engineering_workshop_rhbk_realm_backstage_name }}
           application:
             git:
-              host: {{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
+              host: {{ ocp4_workload_platform_engineering_workshop_developer_hub_config_git_host }}
+              group: {{ ocp4_workload_platform_engineering_workshop_developer_hub_config_git_group }}
+              repo: {{ ocp4_workload_platform_engineering_workshop_developer_hub_config_git_repo }}
+              revision: {{ ocp4_workload_platform_engineering_workshop_developer_hub_config_git_revision }}
 
         rhdhGitops:
           name: {{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_name }}
@@ -162,7 +174,7 @@ spec:
               rootPassword: "{{ ocp4_workload_platform_engineering_workshop_gitlab_config_root_password }}"
               host: {{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
             backstage:
-              host: backstage-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
+              host: backstage-developer-hub-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
             keycloak:
               host: {{ ocp4_workload_platform_engineering_workshop_rhbk_host }}.{{ r_openshift_subdomain }}
               realm: {{ ocp4_workload_platform_engineering_workshop_rhbk_realm_backstage_name }}
@@ -206,17 +218,33 @@ spec:
           name: amq-streams
           namespace: kafka
 
-        parasol:
-          name: parasol
-          namespace: parasol-dev
+        parasolInsurance:
+          name: parasol-insurance
+          namespace: parasol-insurance-dev
 
         orchestrator:
           name: {{ ocp4_workload_platform_engineering_workshop_orchestrator_application_name }}
           namespace: {{ ocp4_workload_platform_engineering_workshop_orchestrator_namespace }}
           backstage:
             backend:
-              url: https://backstage-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
+              url: https://backstage-developer-hub-{{ ocp4_workload_platform_engineering_workshop_rhdh_namespace }}.{{ r_openshift_subdomain }}
           openshift:
             url: {{ r_openshift_api_server }}
           gitlab:
             url: https://{{ ocp4_workload_platform_engineering_workshop_gitlab_config_host }}
+
+        tpa:
+          enabled: true
+          name: {{ ocp4_workload_platform_engineering_workshop_tpa_application_name }}
+          namespace: {{ ocp4_workload_platform_engineering_workshop_tpa_namespace }}
+          appDomain: {{ ocp4_workload_platform_engineering_workshop_tpa_appDomain }}
+          oidcIssuer: {{ ocp4_workload_platform_engineering_workshop_tpa_oidc_issuer }}
+          s3:
+            region: {{ ocp4_workload_platform_engineering_workshop_tpa_s3_region }}
+
+        acs:
+          enabled: true
+          name: {{ ocp4_workload_platform_engineering_workshop_acs_application_name }}
+          namespace: {{ ocp4_workload_platform_engineering_workshop_acs_namespace }}
+          clusterName: {{ ocp4_workload_platform_engineering_workshop_acs_clustername }}
+          adminPassword: {{ ocp4_workload_platform_engineering_workshop_acs_adminpassword }}

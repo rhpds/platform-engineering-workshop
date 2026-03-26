@@ -3,7 +3,10 @@
 # App-of-apps GitOps source
 # ------------------------------------------------
 
-ocp4_workload_platform_engineering_workshop_gitops_repo: https://github.com/redhat-pe-workshop/helm.git
+# set to true to continue deployment even if child apps fail to sync/healthy
+ocp4_workload_platform_engineering_workshop_wait_for_apps_ignore_errors: false
+
+ocp4_workload_platform_engineering_workshop_gitops_repo: https://github.com/redhat-pe-workshop/ocp-pe-wkshp-helm-infra.git
 ocp4_workload_platform_engineering_workshop_gitops_repo_tag: main
 
 # ------------------------------------------------
@@ -217,6 +220,11 @@ ocp4_workload_platform_engineering_workshop_rhbk_client_backstage_plugin_secret:
 
 ocp4_workload_platform_engineering_workshop_rhbk_user_password: "{{ common_password }}"
 
+ocp4_workload_platform_engineering_workshop_rhbk_client_tpacli_secret:
+  "{{ lookup('ansible.builtin.password', '/tmp/passwordfile-client-tpacli', chars=['ascii_letters', 'digits'], length=32) }}"
+
+
+
 # ------------------------------------------------
 # Quay
 # ------------------------------------------------
@@ -230,6 +238,13 @@ ocp4_workload_platform_engineering_workshop_quay_admin_user_password: "{{ common
 
 ocp4_workload_platform_engineering_workshop_quay_organizations:
   - parasol
+ocp4_workload_platform_engineering_workshop_quay_users:
+  - username: dev1
+    email: dev1@rhdh.com
+    password: "{{ common_password }}"
+  - username: dev2
+    email: dev2@rhdh.com
+    password: "{{ common_password }}"
 
 # ------------------------------------------------
 # LLM / LiteLLM
@@ -240,13 +255,6 @@ ocp4_workload_platform_engineering_workshop_litellm_api_url: >-
 ocp4_workload_platform_engineering_workshop_litellm_api_key: >-
   {{ lookup('agnosticd_user_data', 'litellm_virtual_key') | default('') }}
 
-ocp4_workload_platform_engineering_workshop_quay_users:
-  - username: dev1
-    email: dev1@rhdh.com
-    password: "{{ common_password }}"
-  - username: dev2
-    email: dev2@rhdh.com
-    password: "{{ common_password }}"
 
 # ------------------------------------------------
 # Vault
@@ -275,8 +283,18 @@ ocp4_workload_platform_engineering_workshop_rhdh_gitops_password: "{{ common_pas
 # ------------------------------------------------
 
 ocp4_workload_platform_engineering_workshop_rhdh_argo_application_name: backstage-bootstrap
-ocp4_workload_platform_engineering_workshop_rhdh_namespace: backstage
+ocp4_workload_platform_engineering_workshop_rhdh_namespace: rhdh
 ocp4_workload_platform_engineering_workshop_rhdh_psql_password: password
+
+# ------------------------------------------------
+# Developer Hub (Operator-based deployment)
+# ------------------------------------------------
+
+ocp4_workload_platform_engineering_workshop_developer_hub_namespace: rhdh
+ocp4_workload_platform_engineering_workshop_developer_hub_config_git_host: github.com
+ocp4_workload_platform_engineering_workshop_developer_hub_config_git_group: redhat-ads-tech
+ocp4_workload_platform_engineering_workshop_developer_hub_config_git_repo: ocp-app-platform-demo-developer-hub-config
+ocp4_workload_platform_engineering_workshop_developer_hub_config_git_revision: main
 
 # ------------------------------------------------
 # Orchestrator
@@ -315,3 +333,23 @@ ocp4_workload_platform_engineering_workshop_rhtas_oidc_issuer:
   "{{ ocp4_workload_platform_engineering_workshop_rhbk_host }}.{{ r_openshift_subdomain }}/realms/{{ ocp4_workload_platform_engineering_workshop_rhbk_realm_backstage_name }}" # yamllint disable-line rule:line-length
 ocp4_workload_platform_engineering_workshop_rhtas_root_cert_email: admin@rhdemo.com
 ocp4_workload_platform_engineering_workshop_rhtas_root_cert_org: Parasol
+
+# ------------------------------------------------
+# Red Hat Trusted Profile Analyzer
+# ------------------------------------------------
+
+ocp4_workload_platform_engineering_workshop_tpa_application_name: trusted-profile-analyzer
+ocp4_workload_platform_engineering_workshop_tpa_namespace: trusted-profile-analyzer
+ocp4_workload_platform_engineering_workshop_tpa_s3_region: "https://s3-{{ ocp4_workload_platform_engineering_workshop_noobaa_namespace }}.{{ r_openshift_subdomain }}:443"
+ocp4_workload_platform_engineering_workshop_tpa_appDomain: "-{{ ocp4_workload_platform_engineering_workshop_tpa_namespace }}.{{ r_openshift_subdomain }}"
+ocp4_workload_platform_engineering_workshop_tpa_oidc_issuer:
+  "https://{{ ocp4_workload_platform_engineering_workshop_rhbk_host }}.{{ r_openshift_subdomain }}/realms/{{ ocp4_workload_platform_engineering_workshop_rhbk_realm_backstage_name }}" # yamllint disable-line rule:line-length
+
+# ------------------------------------------------
+# Red Hat Advanced Cluster Security
+# ------------------------------------------------
+
+ocp4_workload_platform_engineering_workshop_acs_application_name: acs
+ocp4_workload_platform_engineering_workshop_acs_namespace: stackrox 
+ocp4_workload_platform_engineering_workshop_acs_clustername: local-cluster
+ocp4_workload_platform_engineering_workshop_acs_adminpassword: "{{ common_password }}"
