@@ -33,6 +33,15 @@ ocp4_workload_platform_engineering_workshop_openshift_gitops_operator_config:
     - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
       value: '{{ ocp4_workload_platform_engineering_workshop_rhdh_gitops_namespace }},openshift-gitops'
 
+ocp4_workload_platform_engineering_workshop_openshift_gitops_rbac_update: true
+ocp4_workload_platform_engineering_workshop_openshift_gitops_rbac_default_policy: "role:readonly"
+ocp4_workload_platform_engineering_workshop_openshift_gitops_rbac_scopes: "[groups, email]"
+ocp4_workload_platform_engineering_workshop_openshift_gitops_rbac_policy: |
+  g, system:cluster-admins, role:admin
+  g, cluster-admins, role:admin
+  p, pe1, applications, *, pe-workshop/*, allow
+  p, pe1, projects, get, pe-workshop, allow
+
 ocp4_workload_platform_engineering_workshop_openshift_gitops_setup_cluster_admin: true
 
 ocp4_workload_platform_engineering_workshop_openshift_gitops_enable_route: true
