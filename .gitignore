@@ -1,5 +1,16 @@
-site.yml
 site.yaml
 provision-user-data.yaml
 provision-user-data.yml
 .claude
+# Showroom build artifacts
+node_modules/
+www/
+.cache/
+
+# Local Showroom settings and credentials
+.DS_Store
+.env
+.env.local
+.env.*.local
+secrets.json
+*.log
