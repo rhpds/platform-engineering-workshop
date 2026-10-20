@@ -1,0 +1,37 @@
+[IMPORTANT]
+====
+**Skipped the previous modules?** If you didn't complete the previous module, you can fast-forward to this module's starting state by running:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+cat <<'EOF' | oc apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: developer-hub
+  namespace: openshift-gitops
+spec:
+  project: pe-workshop
+  source:
+    repoURL: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs.git
+    targetRevision: main
+    path: {overlay-path}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rhdh
+  syncPolicy:
+    automated:
+      selfHeal: true
+EOF
+----
+
+Wait for the Application to sync and the Pod to become healthy before continuing:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc rollout status deployment/backstage-developer-hub -n rhdh
+----
+
+It can take up to 5 minutes for the initial deployment to become ready, as it has to load and configure Developer Hub plugins for the first time.
+
+====

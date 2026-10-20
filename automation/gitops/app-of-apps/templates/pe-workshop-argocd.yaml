@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+{{ include "app-of-apps.metadata" (dict "name" .Values.peWorkshopArgocd.name "namespace" .Values.argocd.namespace "syncWave" "1") }}
+spec:
+  destination:
+    namespace: {{ .Values.argocd.namespace }}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: {{ .Values.gitops.basePath }}pe-workshop-argocd
+    repoURL: {{ .Values.gitops.repoURL }}
+    targetRevision: {{ .Values.gitops.targetRevision }}
+    helm:
+      valuesObject:
+        clusterSubdomain: {{ .Values.cluster.subdomain }}
+        sourceRepos:
+          - https://gitlab-gitlab.{{ .Values.cluster.subdomain }}/rhdh/ocp-pe-wkshp-rhdh-configs.git
+          - https://gitlab-gitlab.{{ .Values.cluster.subdomain }}/rhdh/ocp-pe-wkshp-dev-spaces-config.git
+          - https://gitlab-gitlab.{{ .Values.cluster.subdomain }}/rhdh/prerequisite-samples.git
+          - https://gitlab-gitlab.{{ .Values.cluster.subdomain }}/rhdh/infra-app-of-apps.git
+          - https://gitlab-gitlab.{{ .Values.cluster.subdomain }}/parasol/*
+{{ include "app-of-apps.syncPolicy" . | indent 2 }}

@@ -1,0 +1,105 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cosign-keygen
+  namespace: {{ .Values.namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: cosign-keygen
+      restartPolicy: OnFailure
+      containers:
+        - name: cosign-keygen
+          # ose-cli-rhel9 v4.20 — RHEL 9 required for glibc 2.34+ (cosign binary compatibility)
+          # https://catalog.redhat.com/en/software/containers/openshift4/ose-cli-rhel9/6528096620ebdcf82af4cbf9#overview
+          image: registry.redhat.io/openshift4/ose-cli-rhel9@sha256:0bfeb47948c5b9a43f9d1cf7a8318c466ff69f48acd53b062479a9448bddde97
+          env:
+            - name: VAULT_NAMESPACE
+              value: {{ .Values.vault.namespace | quote }}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              set -euo pipefail
+
+              # Wait for Vault KV engine to be ready (vault-setup job must have
+              # finished enabling KV v2 and logging in with the root token)
+              echo "Waiting for Vault..."
+              until oc exec vault-0 -n "$VAULT_NAMESPACE" -- vault kv list kv/secrets 2>/dev/null; do
+                echo "Vault KV engine not ready, retrying in 10s..."
+                sleep 10
+              done
+              echo "Vault is ready"
+
+              # Check if keys already exist in Vault
+              echo "Checking if cosign keys already exist in Vault..."
+              EXISTING=$(oc exec vault-0 -n "$VAULT_NAMESPACE" -- vault kv get -field=value kv/secrets/rhtas/cosign-public-key 2>/dev/null || true)
+              if [ -n "$EXISTING" ]; then
+                echo "Cosign keys already exist in Vault, skipping"
+                exit 0
+              fi
+
+              # Wait for cli-server to be ready
+              echo "Waiting for cli-server..."
+              until curl -sf http://cli-server.{{ .Values.namespace }}.svc:8080/clients/linux/cosign-amd64.gz -o /dev/null; do
+                echo "cli-server not ready, retrying in 10s..."
+                sleep 10
+              done
+              echo "cli-server is ready"
+
+              # Download and install cosign
+              echo "Downloading cosign..."
+              curl -sL http://cli-server.{{ .Values.namespace }}.svc:8080/clients/linux/cosign-amd64.gz | gunzip > /tmp/cosign
+              chmod +x /tmp/cosign
+
+              # Generate key pair
+              echo "Generating cosign key pair..."
+              cd /tmp
+              COSIGN_PASSWORD="" /tmp/cosign generate-key-pair
+
+              PRIVATE_KEY=$(cat /tmp/cosign.key)
+              PUBLIC_KEY=$(cat /tmp/cosign.pub)
+
+              if [ -z "$PRIVATE_KEY" ] || [ -z "$PUBLIC_KEY" ]; then
+                echo "ERROR: Failed to generate cosign key pair"
+                exit 1
+              fi
+
+              # Store keys in Vault with retries
+              echo "Storing cosign keys in Vault..."
+              RETRY_COUNT=0
+              MAX_RETRIES=20
+
+              while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+                if oc exec vault-0 -n "$VAULT_NAMESPACE" -- vault kv put kv/secrets/rhtas/cosign-private-key value="$PRIVATE_KEY" && \
+                   oc exec vault-0 -n "$VAULT_NAMESPACE" -- vault kv put kv/secrets/rhtas/cosign-public-key value="$PUBLIC_KEY"; then
+                  echo "Cosign keys stored in Vault successfully"
+                  break
+                else
+                  RETRY_COUNT=$((RETRY_COUNT + 1))
+                  if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                    echo "Failed to store keys in Vault (attempt $RETRY_COUNT/$MAX_RETRIES), retrying in 10s..."
+                    sleep 10
+                  else
+                    echo "ERROR: Failed to store keys in Vault after $MAX_RETRIES attempts"
+                    exit 1
+                  fi
+                fi
+              done
+
+              # Verify keys were actually stored
+              echo "Verifying keys were stored..."
+              VERIFY_PRIVATE=$(oc exec vault-0 -n "$VAULT_NAMESPACE" -- vault kv get -field=value kv/secrets/rhtas/cosign-private-key 2>/dev/null)
+              VERIFY_PUBLIC=$(oc exec vault-0 -n "$VAULT_NAMESPACE" -- vault kv get -field=value kv/secrets/rhtas/cosign-public-key 2>/dev/null)
+
+              if [ -z "$VERIFY_PRIVATE" ] || [ -z "$VERIFY_PUBLIC" ]; then
+                echo "ERROR: Keys were not found in Vault after storage attempt"
+                exit 1
+              fi
+
+              echo "Cosign keys generated and stored in Vault successfully"

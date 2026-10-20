@@ -1,0 +1,40 @@
+nameOverride: vault
+
+image:
+  repository: registry.connect.redhat.com/hashicorp/vault
+  tag: 1.21.4-ubi
+  pullPolicy: IfNotPresent
+
+cluster:
+  subdomain: ""
+
+kubernetes:
+  apiserver:
+
+vault:
+  auth:
+    namespace: default
+
+secrets:
+  gitlab:
+    rootPassword: ""
+  keycloak:
+    clientId: backstage
+    pluginClientId: backstage-plugin
+    clientSecret: ""
+    pluginClientSecret: ""
+    openshiftClientSecret: ""
+  rhdh:
+    argocdPassword: ""
+    postgresqlPassword: ""
+  orchestrator:
+    token: ""
+  common:
+    password: ""
+  litellm:
+    apiUrl: ""
+    apiKey: ""
+  kafka:
+    userPassword: ""
+  tpa:
+    cliClientSecret: ""

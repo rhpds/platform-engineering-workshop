@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: {{ .Values.projectName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  description: Scoped project for PE workshop attendees
+  destinations:
+  {{- range .Values.destinations }}
+    - namespace: {{ .namespace | quote }}
+      server: {{ .server }}
+  {{- end }}
+  sourceRepos:
+  {{- range .Values.sourceRepos }}
+    - {{ . }}
+  {{- end }}
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRole
+    - group: rbac.authorization.k8s.io
+      kind: ClusterRoleBinding
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

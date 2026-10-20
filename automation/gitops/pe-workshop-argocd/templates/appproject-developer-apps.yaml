@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: developer-apps
+  namespace: {{ .Values.namespace }}
+spec:
+  description: Developer-created applications from RHDH templates
+  destinations:
+    - namespace: '*-build'
+      server: https://kubernetes.default.svc
+    - namespace: '*-dev'
+      server: https://kubernetes.default.svc
+    - namespace: '*-prod'
+      server: https://kubernetes.default.svc
+  sourceRepos:
+    - 'https://gitlab-gitlab.{{ .Values.clusterSubdomain }}/parasol/*-gitops.git'
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  roles:
+    - name: developer
+      description: Developer role for application management
+      policies:
+        - p, proj:developer-apps:developer, applications, get, developer-apps/*, allow
+        - p, proj:developer-apps:developer, applications, sync, developer-apps/*, allow
+      groups:
+        - developers

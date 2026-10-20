@@ -1,11 +1,11 @@
 # Platform Engineering Workshop Collection
 
-Ansible collection for deploying a comprehensive Platform Engineering workshop environment on OpenShift.
+Repository for deploying a comprehensive Platform Engineering workshop environment on OpenShift.
 
 ## Installation
 
 ```bash
-ansible-galaxy collection install rhdp.workshop
+ansible-galaxy collection install git+https://github.com/rhpds/platform-engineering-workshop.git#automation/ansible
 ```
 
 ## Roles
@@ -48,7 +48,7 @@ The role deploys and configures the following components:
 
 ## Requirements
 
-- OpenShift 4.x cluster
+- OpenShift 4.20 or later cluster
 - cluster-admin access
 - `kubernetes.core` collection
 - Sufficient cluster resources for all components
@@ -61,8 +61,19 @@ The role provides extensive configuration options through variables. Key variabl
 - `common_password` - Default password for workshop users
 - `ocp4_workload_platform_engineering_workshop_noobaa_install` - Enable/disable NooBaa installation (default: true)
 
-See [defaults/main.yml](roles/ocp4_workload_platform_engineering_workshop/defaults/main.yml) for all available configuration options.
+See [defaults/main.yml](automation/ansible/roles/ocp4_workload_platform_engineering_workshop/defaults/main.yml) for all available configuration options.
 
 ## License
 
 GPL-2.0-or-later
+
+## Repository layout
+
+The Ansible collection lives in `automation/ansible/`. The OpenShift 5 workshop
+GitOps charts are in `automation/gitops/`, and the Showroom Antora source is in
+`content/` with its site configuration at the repository root. For the OpenShift 5
+development catalog item, pin the collection, GitOps chart source, and Showroom
+content to the same branch or tag. The app-of-apps uses
+`automation/gitops/app-of-apps`; its child Applications use the
+`automation/gitops/` base path. The original external GitLab templates and
+application repositories remain separate dependencies.

@@ -1,0 +1,15 @@
+name: modules
+title: Platform Engineering Workshop
+version: ~
+nav:
+  - modules/ROOT/nav.adoc
+
+asciidoc:
+  attributes:
+    experimental: true
+    page-pagination: true
+    guid: '%guid%'
+    openshift_console_url: '%openshift_console_url%'
+    openshift_cluster_ingress_domain: '%openshift_cluster_ingress_domain%'
+    user: '%user%'
+    password: '%password%'

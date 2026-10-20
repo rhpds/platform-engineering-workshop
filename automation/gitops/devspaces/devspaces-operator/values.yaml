@@ -1,0 +1,29 @@
+nameOverride: "devspaces"
+fullnameOverride: ""
+
+namespace: ""
+
+devspaces:
+  subscription:
+    channel: stable
+    installPlanApproval: Manual
+    name: devspaces
+    source: redhat-operators
+    startingCSV: "devspacesoperator.v3.30.2"
+    sourceNamespace: openshift-marketplace
+
+webTerminal:
+  enabled: false
+  subscription:
+    channel: fast
+    name: web-terminal
+    installPlanApproval: Automatic
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
+
+argocd:
+  enabled: true
+  operatorgroup:
+    syncwave: "-3"
+  operator:
+    syncwave: "-2"

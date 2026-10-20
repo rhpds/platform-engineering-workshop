@@ -1,0 +1,134 @@
+gitlab:
+  image: quay.io/redhat-gpte/gitlab:17.4.1
+  email:
+    address: "gitlab@rhdemo.com"
+    displayName: "GitLab Admin"
+    replyTo: "noreply@rhdemo.com"
+  smtp:
+    enabled: "false"
+    domain: "rhdemo.com"
+    host:
+    port: "587"
+    user: "gitlab"
+    password: "gitlab"
+  ssh:
+    host:
+    port: "22"
+  rootPassword:
+  host:
+  https: "true"
+  rootEmail: "root@rhdemo.com"
+  keyBase:
+    db: "0123456789"
+    otp: "0123456789"
+    secret: "0123456789"
+  users:
+    users:
+      - id: dev1
+        name: Dave Developer
+      - id: dev2
+        name: Divya Developer
+      - id: pe1
+        name: Paul PlatEngineer
+      - id: pe2
+        name: Priya PlatEngineer
+    password: 
+  groups:
+    - name: rhdh
+      repo:
+        - name: infra-app-of-apps
+          url: https://github.com/redhat-pe-workshop/infra-app-of-apps.git
+        - name: rhdh-template-developer-self-service
+          url: https://github.com/redhat-pe-workshop/rhdh-template-developer-self-service.git
+        - name: ocp-pe-wkshp-rhdh-configs
+          url: https://github.com/redhat-pe-workshop/ocp-pe-wkshp-rhdh-configs.git
+        - name: ocp-pe-wkshp-dev-spaces-config
+          url: https://github.com/redhat-pe-workshop/ocp-pe-wkshp-dev-spaces-config.git
+        - name: prerequisite-samples
+          url: https://github.com/redhat-pe-workshop/prerequisite-samples.git
+        - name: workspace-images
+          url: https://github.com/redhat-pe-workshop/workspace-images.git
+      users:
+        - id: pe1
+        - id: pe2
+      project:
+        - name: rhdh-issues
+          labels:
+            - name: approved
+              color: green
+            - name: denied
+              color: red        
+    - name: devteam1
+      repo: []
+      users:
+        - id: dev1
+        - id: dev2
+    - name: parasol
+      repo:
+        - name: parasol-insurance
+          url: https://github.com/redhat-pe-workshop/parasol-insurance.git
+        - name: parasol-insurance-manifests
+          url: https://github.com/redhat-pe-workshop/parasol-insurance-manifests.git
+        - name: parasol-insurance-secured-manifests
+          url: https://github.com/redhat-pe-workshop/parasol-insurance-secured-manifests.git
+        - name: parasol-entities
+          url: https://github.com/redhat-pe-workshop/parasol-entities.git
+      users:
+        - id: dev1
+        - id: dev2
+        - id: pe1
+        - id: pe2
+  templates:
+    - group: parasol
+      project: parasol-insurance
+      branch: main
+      templates:
+        - devfile.yaml
+        - README.md
+    - group: rhdh
+      project: rhdh-template-developer-self-service
+      branch: main
+      source: https://github.com/redhat-pe-workshop/rhdh-template-developer-self-service.git
+      templates:
+        - quarkus-chatbot-rag/template.yaml
+    - group: rhdh
+      project: infra-app-of-apps
+      branch: main
+      source: https://github.com/redhat-pe-workshop/infra-app-of-apps.git
+    - group: rhdh
+      project: ocp-pe-wkshp-rhdh-configs
+      branch: main
+      templates:
+        - base/configmap-app-config.yaml
+        - overlays/02-sso-plugins/configmap-app-config-auth.yaml
+        - overlays/02-sso-plugins/patches/dynamic-plugins.yaml
+        - overlays/03-catalog-lightspeed-templates/configmap-app-config-catalog.yaml
+        - overlays/03-catalog-lightspeed-templates/configmap-app-config-lightspeed.yaml
+    - group: rhdh
+      project: ocp-pe-wkshp-dev-spaces-config
+      branch: main
+      templates:
+        - base/checluster.yaml
+postgresql:
+  dbUser: gitlab
+  dbPassword: passw0rd
+  dbName: gitlab_production
+
+cluster:
+  subdomain:
+  apiServer:
+
+gitops:
+  namespace:
+  project: default
+
+quay:
+  host: 
+
+vault:
+  name: vault
+  namespace: vault
+
+orchestrator:
+  # As of RHDH 1.8.0, the orchestrator namespace is in the RHDH (backstage) namespace
+  namespace: backstage

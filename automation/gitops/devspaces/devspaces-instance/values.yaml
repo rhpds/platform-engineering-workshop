@@ -1,0 +1,35 @@
+nameOverride: "devspaces"
+fullnameOverride: ""
+
+namespace: ""
+
+aiAssistantModel: qwen3-235b
+
+devEnvironments:
+  startTimeoutSeconds: 300
+  secondsOfRunBeforeIdling: -1
+  secondsOfInactivityBeforeIdling: -1
+  maxNumberOfWorkspacesPerUser: 5
+  maxNumberOfRunningWorkspacesPerUser: 5
+  defaultEditor: che-incubator/che-code/latest
+  storage:
+    pvc:
+      pvcStrategy: per-workspace
+  resources:
+    limits:
+      memory: 6Gi
+      cpu: "4"
+    requests:
+      memory: 512Mi
+      cpu: 500m
+
+gitlab:
+  host: ""
+
+argocd:
+  enabled: true
+  instance:
+    syncwave: "0"
+
+tooling:
+  image: quay.io/tssc_demos/etx-custom-web-terminal:v0.1

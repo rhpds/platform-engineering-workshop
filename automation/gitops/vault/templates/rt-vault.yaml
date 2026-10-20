@@ -1,0 +1,30 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: vault
+spec:
+  # Vault's UI requires its own CSP to function (login breaks without it).
+  # The Showroom console-embed workload applies a global CSP via the
+  # IngressController that overwrites Vault's CSP, so we set a per-route
+  # CSP here that restores Vault's directives and adds frame-ancestors
+  # to allow embedding in Showroom's iframe.
+  {{- if .Values.cluster.subdomain }}
+  httpHeaders:
+    actions:
+      response:
+      - name: Content-Security-Policy
+        action:
+          type: Set
+          set:
+            value: "default-src 'none'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'unsafe-inline' 'self'; form-action 'none'; frame-ancestors 'self' https://*.{{ .Values.cluster.subdomain }}; font-src 'self'"
+  {{- end }}
+  to:
+    kind: Service
+    name: vault
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

@@ -1,0 +1,149 @@
+= Module 6: Deploy Developer Hub
+:source-highlighter: rouge
+:toc: macro
+:toclevels: 1
+
+Over the last three modules, you've worked with the building blocks of a well-run platform: GitOps for declarative deployment, Vault for secrets management, and managed namespaces with resource guardrails and access controls. Each of these works -- but each required manual steps, CLI commands, and platform knowledge that most developers don't have (or want). This makes it hard to scale.
+
+This is where the developer portal comes in. Red Hat Developer Hub unifies these capabilities behind a self-service interface, so developers can discover services, create applications, and access their tools without needing to understand the underlying platform primitives. Your role as a member of the Platform Engineering team is to deploy and configure it.
+
+Instead of building and maintaining a custom Backstage container and associated JavaScript codebase using the Backstage project, you will use Red Hat Developer Hub's https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes-native Custom Resource (CR),window=k8s_docs] to deploy and configure your instance using the  Red Hat Developer Hub Operator.
+
+== Learning objectives
+
+By the end of this module, you will be able to:
+
+* Deploy Red Hat Developer Hub using the Backstage CR and Argo CD
+* Understand how the *Red Hat Developer Hub Operator* manages the deployment lifecycle of Backstage instances
+* Access your running Red Hat Developer Hub instance
+
+== Exercise 1: Explore the Configuration Files
+
+A repository containing a basic set of configuration files has been pre-created for you - take a look at the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs.git[rhdh/ocp-pe-wkshp-rhdh-configs GitLab repository,window=gitlab].
+
+NOTE: If prompted to log in to GitLab, use username `pe1` and password `{common_password}`.
+
+image::m3/gitlab-files.png[Configuration base files in GitLab,link=self,window=blank,align="center",width=700,title=GitLab: A set of base configuration files for you Red Hat Developer Hub deployment]
+
+The *base/* folder contains files that are used to configure an instance of Red Hat Developer Hub, plus a _kustomization.yaml_ file - more on that last one later:
+
+* _backstage-cr.yaml_ - A minimal configuration to deploy your RHDH instance.
+* _configmap-app-config.yaml_ - Standard https://backstage.io/docs/conf/[Backstage configuration,window=backstage_docs] file, stored in a Kubernetes https://kubernetes.io/docs/concepts/configuration/configmap/[ConfigMap,window=k8s_docs].
+* _configmap-dynamic-plugins.yaml_ - An RHDH specific configuration file that configures Backstage plugins at runtime.
+
+TIP: These files have inline comments that explain specific sections. It's recommended that you review each file and the comments to gain a better understanding of how they are used to configure Red Hat Developer Hub.
+
+NOTE: Backstage utilizes plugins to extend it with specific features and functionality. For example, if you'd like to show the Jenkins build status for your applications in Developer Hub you'd install the Jenkins plugin. Upstream Backstage requires source code changes to add plugins. Developer Hub uses a dynamic plugin system to install and configure plugins entirely through configuration files at runtime. 
+
+These three files are all you need to deploy and start customizing your internal developer portal using the Red Hat Developer Hub Operator.
+
+=== About Kustomize
+
+This workshop uses link:https://kustomize.io[Kustomize,window=kustomize_docs] https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/#bases-and-overlays[overlays,window=k8s_docs] to manage the layers of configuration that construct and enhance your internal developer portal. Argo CD supports both Kustomize and link:https://helm.sh[Helm,window=helm_docs] for rendering Kubernetes manifests, allowing us to use a set of base manifests to which we apply overrides per environment or per workshop module. We chose this approach to illustrate progressive enhancement of a Developer Hub deployment.
+
+https://kustomize.io/[Kustomize,window=kustomize_docs] uses the declarations in the _kustomization.yaml_ file to "render" your configuration files. This becomes more powerful in later modules as we layer on additional configuration properties and files.
+
+Preview the Kustomize output in the terminal using the following commands:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+git clone https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs
+oc kustomize ocp-pe-wkshp-rhdh-configs/base
+----
+
+These rendered files could be applied to the cluster using `oc apply -k`, but in your case Argo CD will take care of that.
+
+== Exercise 2: Create the Argo CD Application
+
+You will deploy Developer Hub by creating an Argo CD Application that initially points at the `base/` directory of the configuration repository. This directory contains a minimal Backstage custom resource with guest authentication and no plugins -- the simplest possible deployment.
+
+. In the **Terminal** tab, create the Argo CD Application:
++
+[source,bash,role="execute",subs="attributes+"]
+----
+cat <<'EOF' | oc apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: developer-hub
+  namespace: openshift-gitops
+spec:
+  project: pe-workshop
+  source:
+    repoURL: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs.git
+    targetRevision: main
+    path: base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rhdh
+  syncPolicy:
+    automated:
+      selfHeal: true
+EOF
+----
+
+. Open the **Argo CD** tab. Log in if prompted:
++
+* Click **Log in via OpenShift**, select the **developers** identity provider
+* Username: `pe1`
+* Password: `{common_password}`
+
+. Find the `developer-hub` Application and click into it. Watch the sync progress -- Argo CD will deploy three resources:
++
+* A `Backstage` custom resource -- tells the Operator what to deploy
+* A `ConfigMap` with the app-config -- minimal configuration with just a title and base URL
+* A `ConfigMap` for dynamic plugins -- all plugins disabled for now
+. The Backstage resource should have a number of child resources that it manages, including the a `backstage-developer-hub` Deployment
++
+image::m3/argo-app-tree.png[The Argo CD application view showing all managed resources,link=self,window=blank,align="center",width=700,title="Showing resources managed by the *developer-hub* Application in Argo CD"]
+
+And that's it! You've deployed an instance of Red Hat Developer Hub using Operator and the Backstage CR that it uses to configure deployments.
+
+=== Verify
+
+In the Argo CD Application view, you should see:
+
+* Sync status: **Synced**
+* Health status: **Healthy**
+* Child resources, including a `backstage-developer-hub` Pod showing a green heart symbol
+
+NOTE: It can take up to 5 minutes for the initial Pod deployment to complete, as it needs to pull container images, unpack and install core Backstage and Developer Hub plugins. To observe the logs you can click the Pod in the Argo CD UI, select **Logs**, then choose `install-dynamic-plugins` in the dropdown above the log stream.
+
+== Exercise 3: Access Developer Hub
+
+Once the Operator has created the deployment and the Pod is ready, Developer Hub will be accessible via a Route.
+
+. Select the **Developer Hub** tab on the right and click the refresh icon
++
+If the tab doesn't load immediately, wait 1-2 minutes for the pod to start. Remember, it needs to show a green heart symbol in Argo CD.
+
+. You should see the Developer Hub landing page with a *guest authentication* option
++
+Click **Enter** to log in as a guest user.
++
+image::m3/rhdh-empty.png[Red Hat Developer Hub landing page,link=self,window=blank,align="center",width=700,title="Red Hat Developer Hub landing page with default theme"]
+. Explore the empty portal:
++
+* The **Catalog** page shows no *Component* entities -- you haven't registered anything yet
+* The **Self-Service** page (accessed using the plus icon in the top navbar) shows no templates -- you haven't imported any yet
+* The sidebar is minimal -- no additional plugins are configured
++
+TIP: Backstage -- and therefore Developer Hub -- uses Entities to represent Components, APIs, Groups, Users, and business Domains in the built-in Software Catalog. These Entities have relationships that can be viewed as a graph, or read by AI Agents to understand your businesses software architecture. You will see this in action in later modules.
+
+This is the starting point. A functional Developer Hub instance deployed with a single Backstage custom resource and a basic app-config. In the next modules, you will progressively add authentication, integrations, catalog entities, and templates.
+
+== Module summary
+
+You've deployed a minimal Developer Hub instance using GitOps.
+
+**What you accomplished:**
+
+* Created an Argo CD Application in your scoped `pe-workshop` project
+* Deployed Developer Hub using the Backstage custom resource provided by the Red Hat Developer Hub Operator
+* Verified the instance is running and accessible
+
+**Key takeaway:**
+Deploying Developer Hub is operator-managed and declarative. In the modules ahead, you will progressively configure this portal to surface the platform capabilities you've already explored: secrets from Vault, managed namespaces with guardrails, and GitOps-driven deployments -- all through a self-service interface that developers can use without filing a ticket.
+
+**Next steps:**
+In the next module, you will switch to the next configuration overlay to add SSO authentication, platform integrations, and dynamic plugins. Developer Hub will transform from a blank canvas into a connected portal.
