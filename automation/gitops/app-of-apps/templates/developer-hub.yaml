@@ -13,9 +13,7 @@ spec:
     helm:
       valuesObject:
         operator:
-          # Uses the live catalog instead of the pinned snapshot because
-          # fast-1.9 is not available in the snapshot image.
-          source: redhat-operators
+          source: {{ include "app-of-apps.operatorSource" . }}
           sourceNamespace: openshift-marketplace
         vault:
           namespace: {{ .Values.vault.namespace }}

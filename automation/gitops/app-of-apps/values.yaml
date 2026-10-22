@@ -14,7 +14,7 @@ catalogSource:
   name: redhat-operators-snapshot
   namespace: openshift-marketplace
   image: quay.io/rhpds/olm_snapshot_redhat_catalog
-  tag: v4.21_2026_05_25
+  tag: v4.22_2026_10_19
   displayName: "Red Hat Operators (Snapshot)"
   publisher: "Red Hat Demo Platform"
   grpcPodConfig:
@@ -72,7 +72,7 @@ serviceMesh:
   namespace: openshift-operators
 
 noobaa:
-  enabled: true
+  enabled: false
   name: noobaa
   namespace: openshift-storage
 
