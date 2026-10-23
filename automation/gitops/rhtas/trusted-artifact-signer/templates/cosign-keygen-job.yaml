@@ -49,7 +49,7 @@ spec:
               # again or an equivalent distribution mechanism is provided.
               # Download cosign from the sigstore GitHub release
               echo "Downloading cosign..."
-              curl -sL https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64 -o /tmp/cosign
+              curl -sL https://github.com/sigstore/cosign/releases/download/v3.1.3/cosign-linux-amd64 -o /tmp/cosign
               chmod +x /tmp/cosign
 
               # Generate key pair
