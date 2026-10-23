@@ -97,6 +97,7 @@ spec:
                 osv:
                   period: 12h
                   source: https://github.com/github/advisory-database
+                  transport: git
                   path: advisories/github-reviewed
 {{ include "app-of-apps.syncPolicy" . | indent 2 }}
 {{- end }}
