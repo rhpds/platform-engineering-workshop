@@ -8,6 +8,14 @@ metadata:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   clusterName: {{ .Values.clusterName }}
+  sensor:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 2Gi
   admissionControl:
     listenOnCreates: true
     listenOnEvents: true
