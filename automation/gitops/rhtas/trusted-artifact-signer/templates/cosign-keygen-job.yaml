@@ -44,6 +44,9 @@ spec:
                 exit 0
               fi
 
+              # TODO: RHTAS v1.5.0 removed cli-server from the SecureSign CRD.
+              # Restore Red Hat's build of cosign once cli-server is available
+              # again or an equivalent distribution mechanism is provided.
               # Download cosign from the sigstore GitHub release
               echo "Downloading cosign..."
               curl -sL https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64 -o /tmp/cosign
