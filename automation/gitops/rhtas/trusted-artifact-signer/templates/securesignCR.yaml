@@ -39,8 +39,6 @@ spec:
     backFillRedis:
       enabled: true
       schedule: 0 0 * * *
-    rekorSearchUI:
-      enabled: true
     pvc:
       accessModes:
         - ReadWriteOnce
