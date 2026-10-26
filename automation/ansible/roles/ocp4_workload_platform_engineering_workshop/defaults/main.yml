@@ -28,6 +28,8 @@ ocp4_workload_platform_engineering_workshop_openshift_pipelines_namespace: opens
 ocp4_workload_platform_engineering_workshop_noobaa_install: true
 ocp4_workload_platform_engineering_workshop_noobaa_namespace: openshift-storage
 ocp4_workload_platform_engineering_workshop_noobaa_name: noobaa
+# Preserve the CNV default; set gp3-csi for AWS EBS-backed deployments.
+ocp4_workload_platform_engineering_workshop_noobaa_storage_class: ocs-external-storagecluster-ceph-rbd
 
 # ------------------------------------------------
 # GitLab

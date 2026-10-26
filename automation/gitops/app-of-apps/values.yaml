@@ -75,6 +75,9 @@ noobaa:
   enabled: false
   name: noobaa
   namespace: openshift-storage
+  backingStore:
+    # Preserve CNV storage; AWS deployments override this with gp3-csi.
+    storageClass: ocs-external-storagecluster-ceph-rbd
 
 gitlab:
   name: gitlab
