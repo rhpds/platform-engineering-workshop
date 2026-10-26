@@ -84,6 +84,8 @@ spec:
           enabled: {{ ocp4_workload_platform_engineering_workshop_noobaa_install }}
           name: {{ ocp4_workload_platform_engineering_workshop_noobaa_name }}
           namespace: {{ ocp4_workload_platform_engineering_workshop_noobaa_namespace }}
+          backingStore:
+            storageClass: "{{ ocp4_workload_platform_engineering_workshop_noobaa_storage_class }}"
 
         gitlab:
           name: {{ ocp4_workload_platform_engineering_workshop_gitlab_gitops_name }}

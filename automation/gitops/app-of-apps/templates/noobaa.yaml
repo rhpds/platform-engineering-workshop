@@ -27,5 +27,7 @@ spec:
               source: {{ include "app-of-apps.operatorSource" . }}
         noobaa:
           nameOverride: {{ .Values.noobaa.name }}
+          backingStore:
+            storageClass: {{ .Values.noobaa.backingStore.storageClass | quote }}
 {{ include "app-of-apps.syncPolicy" . | indent 2 }}
 {{- end }}
