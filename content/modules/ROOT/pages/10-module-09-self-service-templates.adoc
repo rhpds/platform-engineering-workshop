@@ -165,7 +165,7 @@ You should see:
 * `parasol-chatbot-dev` -- development deployment managed by Argo CD
 * `parasol-chatbot-prod` -- production deployment (promoted via GitOps)
 +
-NOTE: If the namespaces are not listed, wait a minute and retry the command. There's a short delay between running the template and Argo CD rolling out the infrastructure. You can speed it up by finding the infra-app-bootstraps* Application in Argo CD and clicking *Refresh*.
+NOTE: If the namespaces are not listed, wait a minute and retry the command. There's a short delay between running the template and Argo CD rolling out the infrastructure. You can speed it up by finding the **infra-app-bootstraps** Application in Argo CD and clicking *Refresh*.
 
 . In Developer Hub, click the **CI** tab to watch the pipeline execution:
 +

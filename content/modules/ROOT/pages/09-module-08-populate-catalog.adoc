@@ -157,9 +157,9 @@ The overlay you just deployed includes **Lightspeed** -- an AI assistant integra
 
 . Click the Lightspeed icon to open the chat interface
 . Use the three dots in the top-right of the Lightspeed interface and select *Fullscreen*
-. In the chat window, select the *VLLM > qwen38-27b* model
+. In the chat window, select the *VLLM > qwen3-235b-a22b* model
 +
-image::populate-catalog/lightspeed-model.png["Lightspeed UI shown with a Qwen3-235B model selected",link=self,window=blank,align="center",width=700,title="Lightspeed UI shown with a Qwen3-235B model selected"]
+image::populate-catalog/lightspeed-model.png["Lightspeed UI shown with a Qwen3-235B-A22B model selected",link=self,window=blank,align="center",width=700,title="Lightspeed UI shown with a Qwen3-235B-A22B model selected"]
 . Ask Lightspeed a question about compliance documentation:
 +
 [source,text,role="copypaste"]

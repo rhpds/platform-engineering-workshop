@@ -197,23 +197,6 @@ oc rollout status deployment/backstage-developer-hub -n rhdh
 . Once logged in, notice what's changed:
 +
 * Your identity is displayed in the top-right profile menu
-+
-[CAUTION]
-====
-If the header is missing, this is a known bug and a fix is coming soon. Fix it by restarting Developer Hub the following command:
-
-[source,bash,role="execute",subs="attributes+"]
-----
-oc rollout restart deployment/backstage-developer-hub -n rhdh
-----
-
-Wait for Developer Hub to be ready using this command:
-
-[source,bash,role="execute",subs="attributes+"]
-----
-oc rollout status deployment/backstage-developer-hub -n rhdh
-----
-====
 * The header's **Developer Tools** (grid) icon now shows links to platform tools: DevSpaces, GitLab, and Quay
 * The sidebar has additional plugin entries
 +
