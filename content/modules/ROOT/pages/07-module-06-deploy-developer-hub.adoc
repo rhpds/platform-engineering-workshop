@@ -9,8 +9,6 @@ This is where the developer portal comes in. Red Hat Developer Hub unifies these
 
 Instead of building and maintaining a custom Backstage container and associated JavaScript codebase using the Backstage project, this workshop uses Red Hat Developer Hub's https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes-native Custom Resource (CR),window=k8s_docs] to deploy and configure your instance using the Red Hat Developer Hub Operator.
 
-The workshop setup has already created the `developer-hub` Application in Argo CD and deployed the base configuration. This saves nearly five minutes of initial deployment time. You will explore the manifests, inspect the running deployment, and log in as a guest user.
-
 == Learning objectives
 
 By the end of this module, you will be able to:
@@ -59,13 +57,15 @@ These rendered files could be applied to the cluster using `oc apply -k`, but in
 
 == Exercise 2: Inspect the Argo CD Application
 
+The workshop setup has already created a `developer-hub` Application in Argo CD and deployed the base configuration. This saves nearly five minutes of initial deployment time. You will explore the manifests, inspect the running deployment, and log in as a guest user.
+
 The pre-created `developer-hub` Application points at the `base/` directory of the configuration repository. This directory contains a minimal Backstage custom resource with guest authentication and no additional plugins.
 
 . In the **Terminal** tab, inspect the existing Application:
 +
 [source,bash,role="execute",subs="attributes+"]
 ----
-oc get application developer-hub -n openshift-gitops -o yaml
+oc get application developer-hub -n openshift-gitops -o json | jq .spec
 ----
 +
 Find these fields in the manifest:
@@ -79,15 +79,25 @@ Find these fields in the manifest:
 . Open the **Argo CD** tab. Log in if prompted:
 +
 * Click **Log in via OpenShift**, select the **developers** identity provider
-* Username: `pe1`
-* Password: `{common_password}`
+* Username:
++
+[source,text,role="copypaste"]
+----
+pe1
+----
+* Password:
++
+[source,text,role="copypaste",subs="attributes+"]
+----
+{common_password}
+----
 
-. Find the `developer-hub` Application and click into it. Inspect the three resources Argo CD has deployed:
+. Find the `developer-hub` Application and click into it. Inspect the resources Argo CD has deployed from the manifests defined in the `base/` directory of the GitLab repository:
 +
 * A `Backstage` custom resource -- tells the Operator what to deploy
 * A `ConfigMap` with the app-config -- minimal configuration with just a title and base URL
 * A `ConfigMap` for dynamic plugins -- all plugins disabled for now
-. The Backstage resource should have a number of child resources that it manages, including a `backstage-developer-hub` Deployment
+. Expand the `Backstage` resource to inspect its child resources, including the `backstage-developer-hub` Deployment. The Red Hat Developer Hub Operator creates and manages these child resources based on the configuration in the `Backstage` custom resource.
 +
 image::m3/argo-app-tree.png[The Argo CD application view showing all managed resources,link=self,window=blank,align="center",width=700,title="Showing resources managed by the *developer-hub* Application in Argo CD"]
 
