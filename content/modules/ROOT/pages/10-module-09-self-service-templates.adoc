@@ -115,11 +115,15 @@ Enough exposition, let's experience the software template as a developer would.
 image::self-service/rhdh-template-choose.png[Template input parameters being captured in Developer Hub,link=self,window=blank,align="center",width=700,title=Template input parameters being captured in Developer Hub]
 . Fill in the parameters:
 +
-* **Application name**: Choose a name (e.g., `parasol-chatbot`)
-* **Owner**: Select `group:default/developers` in the dropdown
-* **Developer Group**: Select `group:default/developers` in the dropdown
+* **Application name**: Enter the following name:
++
+[source,text,role="copypaste"]
+----
+parasol-chatbot
+----
+* **Owner**: Select `developers` in the dropdown. After selection, the input displays `group:default/developers`.
+* **Developer Group**: Select `developers` in the dropdown. After selection, the input displays `group:default/developers`.
 * **Description**: The default is fine
-* Accept the defaults for other fields
 
 . Click **Next**. Leave the image registry settings unchanged, then proceed to the **Review** screen.
 
@@ -169,6 +173,8 @@ NOTE: If the namespaces are not listed, wait a minute and retry the command. The
 
 . In Developer Hub, click the **CI** tab to watch the pipeline execution:
 +
+NOTE: The initial build can take up to 5 minutes to complete.
++
 * The Tekton pipeline runs SonarQube analysis, builds the image, scans it with ACS, generates an SBOM, and uploads to TPA
 * Developers get visibility into build status without leaving Developer Hub
 +
@@ -193,6 +199,10 @@ image::self-service/rhdh-cd-pane.png[Argo CD Applications that manage environmen
 NOTE: Both dev and prod environments will show error states until the first build is complete.
 +
 image::self-service/rhdh-topology.png[Production and Development applications in the Topology View, with Development environment Route, Service, and Pod details shown,link=self,window=blank,align="center",width=700,title="Production and Development applications in the Topology View, with Development environment Route, Service, and Pod details shown"]
+
+. Return to the **CI** tab after the build completes to review the scan results. The build attaches a vulnerability report and lists the detected CVEs (Common Vulnerabilities and Exposures), grouped by severity, alongside the PipelineRun. In this example, we intentionally use older dependencies to illustrate the vulnerability scan in action.
++
+image::self-service/rhdh-ci-vulnerabilities.png[Completed PipelineRun in Developer Hub showing vulnerability counts by severity and the attached report,link=self,window=blank,align="center",width=700,title=Build scan results and vulnerability report in Developer Hub]
 
 == Module summary
 

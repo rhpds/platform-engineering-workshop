@@ -3,19 +3,15 @@
 :toc: macro
 :toclevels: 1
 
-Let us take the developer experience to another level and enable developers to provision full development environments, complete with an in-browser IDE based on VS Code, podman container runtime, testing, debugging, build tools, and agentic AI. Imagine a world where developers can maintain legacy applications, add new features to growing applications, and create greenfield applications, all without having to fight with tools, dependencies, configuration, and resource constraints on their local workstations.
+In the previous module, you created a new application using a self-service template. The template provided the source repository, build pipeline, and GitOps configuration needed to build and deploy the application on OpenShift when developers push new code. But how do developers configure a development environment to write, test, and debug that code?
 
-We will now make that happen with OpenShift Dev Spaces.
+Let us take the developer experience to another level by enabling developers to provision full development environments, complete with an in-browser IDE based on VS Code, Podman container runtime, testing, debugging, build tools, and agentic AI. Developers can maintain legacy applications, add new features to growing applications, and create greenfield applications, all without having to fight with tools, dependencies, configuration, and resource constraints on their local workstations.
 
-OpenShift Dev Spaces is a full featured Cloud IDE (CDE). It includes a Red Hat supported browser native instance of Code OSS (Visual Studio Code). Browser native VS Code does not make any compromises — your multi-monitor setup is safe, and your extensions are compatible.
+https://docs.redhat.com/en/documentation/red_hat_openshift_dev_spaces/3.30[OpenShift Dev Spaces,window=dev-spaces-docs] is a full featured Cloud IDE (CDE). It includes a Red Hat supported browser native instance of Code OSS (Visual Studio Code). Browser native VS Code does not make any compromises — your multi-monitor setup is safe, and your extensions are compatible.
 
 At the heart of OpenShift Dev Spaces are containerized workspaces defined with a configuration-as-code approach.  Each workspace configuration can be tailored to a specific type of work or even a specific project.  The container images backing workspaces can be managed centrally ensuring that tools, frameworks, and languages are consistent, secure, and up-to-date. OpenShift Dev Spaces moves all of your developer workload into a container based environment running on OpenShift, with access to the cloud scale of OpenShift resources.
 
 Empowering developers, and engineers with OpenShift Dev Spaces is like giving teams access to a whole library of virtual workstations, each of which is bespoke engineered for a particular type of work or project.
-
-Stop battling configuration drift, conflicts, and constraints on local workstations or IDEs and embrace the power of OpenShift Dev Spaces.
-
-You can find the documentation here: https://docs.redhat.com/en/documentation/red_hat_openshift_dev_spaces/3.30[OpenShift Dev Spaces Documentation,window=dev-spaces-docs]
 
 == Learning objectives
 
@@ -31,13 +27,15 @@ By the end of this module, you will be able to:
 
 == Exercise 1: Review the Dev Spaces configuration
 
-NOTE: This module requires you to log in to GitLab and OpenShift (using the `developers` IDP). Use username `pe1` and password `{common_password}` for both.
+TIP: This module requires you to log in to GitLab and OpenShift (using the `developers` IDP). Use username `pe1` and password `{common_password}` for both.
 
 Some supporting infrastructure has already been deployed in this OpenShift cluster:
 
 * **Self-hosted https://open-vsx.org/[OpenVSX,window=open-vsx] server** — preloaded with a curated set of VS Code extensions, ensuring developers only use extensions that have been scanned and approved for enterprise use. Deployed in the https://console-openshift-console.{openshift_cluster_ingress_domain}/k8s/ns/che-openvsx/core{tilde}v1{tilde}Pod[`che-openvsx`,window=che-openvsx] namespace.
 
-* **Tekton pipelines for building workspace tooling images** — the images that OpenShift Dev Spaces workspaces run can be fully customized with the coding languages, dependencies, frameworks, and other tools needed by development teams. View the https://console-openshift-console.{openshift_cluster_ingress_domain}/pipelines/ns/workspace-images[Workspace Images Pipeline,window=workspace-image-pipeline]. The image builds rely on the open source https://cekit.io/[CEKIT,window=cekit] project, which allows engineers to use their favorite container build tools without maintaining a fleet of individual Containerfile definitions. View the CEKIT manifests here: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/workspace-images.git[rhdh/workspace-images,window=gitlab].
+* **Tekton pipelines for building workspace tooling images** — the images that OpenShift Dev Spaces workspaces run can be fully customized with the coding languages, dependencies, frameworks, and other tools needed by development teams. View the https://console-openshift-console.{openshift_cluster_ingress_domain}/pipelines/ns/workspace-images[Workspace Images Pipeline,window=workspace-image-pipeline].
++
+NOTE: The image builds rely on the open source https://cekit.io/[CEKIT,window=cekit] project, which allows engineers to use their favorite container build tools without maintaining a fleet of individual Containerfile definitions. View the CEKIT manifests here: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/workspace-images.git[rhdh/workspace-images,window=gitlab].
 
 A git repository has been pre-created with the Dev Spaces configuration that we will deploy in this module.
 
@@ -57,6 +55,8 @@ oc kustomize ocp-pe-wkshp-dev-spaces-config/base
 ----
 
 The rendered CheCluster could be applied to OpenShift using `oc apply -k`, but in your case Argo CD will take care of that.
+
+NOTE: The lab authors use Kustomize to demonstrate progressive enhancement of the Dev Spaces configuration throughout the exercises. Kustomize is not required in your own environment; you can manage and apply the CheCluster configuration using the approach that works best for your team.
 
 == Exercise 2: Deploy an instance of OpenShift Dev Spaces
 
@@ -93,13 +93,13 @@ EOF
 
 . Find the `openshift-dev-spaces` Application and click into it. Watch the sync progress -- Argo CD will deploy a CheCluster resource.
 +
-NOTE: Do not click the *devspaces* application, which is part of the base cluster configuration for the Dev Spaces operator. We deployed that ahead of time.
+NOTE: Do not click the *devspaces* application, which is part of the base cluster configuration for the Dev Spaces operator. That was deployed ahead of time by the workshop infrastructure.
 
 . The CheCluster resource should have a number of child resources that it manages, including the core Dev Spaces Deployments: devspaces-dashboard, che-gateway, and devspaces.
 
 image::dev-spaces/dev-spaces-argo-app.png[ArgoCD deploying Dev Spaces,link=self,window=blank,align="center",width=700,title=Dev Spaces: ArgoCD Application]
 
-NOTE: Wait until all three deployments have completed before proceeding. You will see a green heart on the `che-gateway`, `devspaces`, and `devspaces-dashboard` pods. A blue spinning circle indicates that the pod is still initializing.
+IMPORTANT: Wait until all three deployments have completed before proceeding. You will see a green heart on the `che-gateway`, `devspaces`, and `devspaces-dashboard` pods. A blue spinning circle indicates that the pod is still initializing.
 
 == Exercise 3: Launch a workspace for Parasol Insurance development
 
@@ -107,7 +107,7 @@ Now that we have Dev Spaces installed and running in our cluster, let us launch 
 
 . Click on this link to go to the Git repo for the Parasol Insurance application: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-insurance.git[parasol/parasol-insurance GitLab repository,window=gitlab]
 
-. Scroll down to the README.md and note the `Developer Workspace` contributor badge. Click on that badge to start a new workspace.
+. Scroll down to the README.md and note the `Developer Workspace` contributor badge. Click on that badge to start a new workspace - it's a specially formatted link that redirects to OpenShift Dev Spaces to launch a Cloud Development Environment.
 +
 image::dev-spaces/parasol-insurance-readme.png[Contributor Badge,link=self,window=blank,align="center",width=700,title=Dev Spaces: Contributor Badge]
 +
