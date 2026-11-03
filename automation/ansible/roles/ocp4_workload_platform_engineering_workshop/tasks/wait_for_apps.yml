@@ -76,6 +76,7 @@
 
 # Application health alone does not guarantee the Operator-created Pod is ready.
 - name: Wait for the attendee Developer Hub deployment to be ready
+  when: not (ocp4_etx_app_platform_wait_for_apps_ignore_errors | default(false) | bool)
   kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: Deployment
