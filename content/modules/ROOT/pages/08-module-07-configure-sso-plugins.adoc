@@ -40,9 +40,6 @@ By the end of this module, you will be able to:
 
 You will also see how Kustomize overlays let you layer these additions on top of the base configuration without modifying the original files - this is just a little bonus learning, but isn't required when you embark on your own IDP journey.
 
-:overlay-path: base
-include::partial$skip-ahead.adoc[]
-
 == Exercise 0: Switch to the SSO and plugins overlay
 
 The https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs/-/tree/main/overlays/02-sso-plugins[overlays/02-sso-plugins/,window=gitlab] directory builds on the base configuration by adding:

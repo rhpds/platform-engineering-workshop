@@ -73,3 +73,19 @@
           WARNING: Timed out waiting for all Applications to be Synced and Healthy.
           Unhealthy apps: {{ r_unhealthy_apps | default('unknown') }}.
           Deployment will continue — these apps may still converge.
+
+# Application health alone does not guarantee the Operator-created Pod is ready.
+- name: Wait for the attendee Developer Hub deployment to be ready
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: backstage-developer-hub
+    namespace: "{{ ocp4_workload_platform_engineering_workshop_developer_hub_namespace }}"
+  register: r_developer_hub_deployment
+  retries: 120
+  delay: 15
+  until:
+    - r_developer_hub_deployment.resources | default([]) | length == 1
+    - r_developer_hub_deployment.resources[0].status.observedGeneration | default(0) >= r_developer_hub_deployment.resources[0].metadata.generation
+    - r_developer_hub_deployment.resources[0].status.updatedReplicas | default(0) == r_developer_hub_deployment.resources[0].spec.replicas
+    - r_developer_hub_deployment.resources[0].status.availableReplicas | default(0) >= 1

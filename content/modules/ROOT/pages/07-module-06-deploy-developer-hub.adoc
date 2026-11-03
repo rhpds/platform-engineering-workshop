@@ -5,15 +5,17 @@
 
 Over the last three modules, you've worked with the building blocks of a well-run platform: GitOps for declarative deployment, Vault for secrets management, and managed namespaces with resource guardrails and access controls. Each of these works -- but each required manual steps, CLI commands, and platform knowledge that most developers don't have (or want). This makes it hard to scale.
 
-This is where the developer portal comes in. Red Hat Developer Hub unifies these capabilities behind a self-service interface, so developers can discover services, create applications, and access their tools without needing to understand the underlying platform primitives. Your role as a member of the Platform Engineering team is to deploy and configure it.
+This is where the developer portal comes in. Red Hat Developer Hub unifies these capabilities behind a self-service interface, so developers can discover services, create applications, and access their tools without needing to understand the underlying platform primitives. Your role as a member of the Platform Engineering team is to understand its deployment and configure it.
 
-Instead of building and maintaining a custom Backstage container and associated JavaScript codebase using the Backstage project, you will use Red Hat Developer Hub's https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes-native Custom Resource (CR),window=k8s_docs] to deploy and configure your instance using the  Red Hat Developer Hub Operator.
+Instead of building and maintaining a custom Backstage container and associated JavaScript codebase using the Backstage project, this workshop uses Red Hat Developer Hub's https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes-native Custom Resource (CR),window=k8s_docs] to deploy and configure your instance using the Red Hat Developer Hub Operator.
+
+The workshop setup has already created the `developer-hub` Application in Argo CD and deployed the base configuration. This saves nearly five minutes of initial deployment time. You will explore the manifests, inspect the running deployment, and log in as a guest user.
 
 == Learning objectives
 
 By the end of this module, you will be able to:
 
-* Deploy Red Hat Developer Hub using the Backstage CR and Argo CD
+* Explain how the Backstage CR and Argo CD deploy Red Hat Developer Hub
 * Understand how the *Red Hat Developer Hub Operator* manages the deployment lifecycle of Backstage instances
 * Access your running Red Hat Developer Hub instance
 
@@ -53,34 +55,24 @@ oc kustomize ocp-pe-wkshp-rhdh-configs/base
 
 These rendered files could be applied to the cluster using `oc apply -k`, but in your case Argo CD will take care of that.
 
-== Exercise 2: Create the Argo CD Application
+== Exercise 2: Inspect the Argo CD Application
 
-You will deploy Developer Hub by creating an Argo CD Application that initially points at the `base/` directory of the configuration repository. This directory contains a minimal Backstage custom resource with guest authentication and no plugins -- the simplest possible deployment.
+The pre-created `developer-hub` Application points at the `base/` directory of the configuration repository. This directory contains a minimal Backstage custom resource with guest authentication and no additional plugins.
 
-. In the **Terminal** tab, create the Argo CD Application:
+. In the **Terminal** tab, inspect the existing Application:
 +
 [source,bash,role="execute",subs="attributes+"]
 ----
-cat <<'EOF' | oc apply -f -
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: developer-hub
-  namespace: openshift-gitops
-spec:
-  project: pe-workshop
-  source:
-    repoURL: https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs.git
-    targetRevision: main
-    path: base
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: rhdh
-  syncPolicy:
-    automated:
-      selfHeal: true
-EOF
+oc get application developer-hub -n openshift-gitops -o yaml
 ----
++
+Find these fields in the manifest:
++
+* `spec.project: pe-workshop` -- the scoped Argo CD project used in this workshop
+* `spec.source.repoURL` -- the `rhdh/ocp-pe-wkshp-rhdh-configs` GitLab repository
+* `spec.source.targetRevision: main` and `spec.source.path: base` -- the branch and configuration directory Argo CD deploys
+* `spec.destination.namespace: rhdh` -- where Developer Hub runs
+* `spec.syncPolicy.automated.selfHeal: true` -- Argo CD automatically reconciles the deployment with Git
 
 . Open the **Argo CD** tab. Log in if prompted:
 +
@@ -88,16 +80,16 @@ EOF
 * Username: `pe1`
 * Password: `{common_password}`
 
-. Find the `developer-hub` Application and click into it. Watch the sync progress -- Argo CD will deploy three resources:
+. Find the `developer-hub` Application and click into it. Inspect the three resources Argo CD has deployed:
 +
 * A `Backstage` custom resource -- tells the Operator what to deploy
 * A `ConfigMap` with the app-config -- minimal configuration with just a title and base URL
 * A `ConfigMap` for dynamic plugins -- all plugins disabled for now
-. The Backstage resource should have a number of child resources that it manages, including the a `backstage-developer-hub` Deployment
+. The Backstage resource should have a number of child resources that it manages, including a `backstage-developer-hub` Deployment
 +
 image::m3/argo-app-tree.png[The Argo CD application view showing all managed resources,link=self,window=blank,align="center",width=700,title="Showing resources managed by the *developer-hub* Application in Argo CD"]
 
-And that's it! You've deployed an instance of Red Hat Developer Hub using Operator and the Backstage CR that it uses to configure deployments.
+The Red Hat Developer Hub Operator uses the Backstage CR to create and manage the running instance.
 
 === Verify
 
@@ -107,15 +99,15 @@ In the Argo CD Application view, you should see:
 * Health status: **Healthy**
 * Child resources, including a `backstage-developer-hub` Pod showing a green heart symbol
 
-NOTE: It can take up to 5 minutes for the initial Pod deployment to complete, as it needs to pull container images, unpack and install core Backstage and Developer Hub plugins. To observe the logs you can click the Pod in the Argo CD UI, select **Logs**, then choose `install-dynamic-plugins` in the dropdown above the log stream.
+TIP: To inspect the initial plugin installation logs, click the Pod in the Argo CD UI, select **Logs**, then choose `install-dynamic-plugins` in the dropdown above the log stream.
 
 == Exercise 3: Access Developer Hub
 
-Once the Operator has created the deployment and the Pod is ready, Developer Hub will be accessible via a Route.
+The pre-deployed Developer Hub instance is accessible via an OpenShift Route.
 
 . Select the **Developer Hub** tab on the right and click the refresh icon
 +
-If the tab doesn't load immediately, wait 1-2 minutes for the pod to start. Remember, it needs to show a green heart symbol in Argo CD.
+If the tab doesn't load, check that the `developer-hub` Application is **Synced** and **Healthy** and that the Pod is ready in Argo CD.
 
 . You should see the Developer Hub landing page with a *guest authentication* option
 +
@@ -134,13 +126,13 @@ This is the starting point. A functional Developer Hub instance deployed with a 
 
 == Module summary
 
-You've deployed a minimal Developer Hub instance using GitOps.
+You've explored how GitOps and the Red Hat Developer Hub Operator manage a minimal Developer Hub instance.
 
 **What you accomplished:**
 
-* Created an Argo CD Application in your scoped `pe-workshop` project
-* Deployed Developer Hub using the Backstage custom resource provided by the Red Hat Developer Hub Operator
-* Verified the instance is running and accessible
+* Inspected the pre-created Argo CD Application in your scoped `pe-workshop` project
+* Reviewed the base manifests and the Backstage custom resource managed by the Red Hat Developer Hub Operator
+* Verified the instance is running and logged in as a guest user
 
 **Key takeaway:**
 Deploying Developer Hub is operator-managed and declarative. In the modules ahead, you will progressively configure this portal to surface the platform capabilities you've already explored: secrets from Vault, managed namespaces with guardrails, and GitOps-driven deployments -- all through a self-service interface that developers can use without filing a ticket.

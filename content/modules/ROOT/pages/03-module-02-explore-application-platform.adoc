@@ -106,4 +106,4 @@ You've explored the application platform capabilities available on the cluster a
 * The building blocks are in place -- now you need to wire them together through Developer Hub
 
 **Next steps:**
-In Module 3, you will deploy your first Developer Hub instance using Argo CD and the `pe-workshop` project.
+In Module 6, you will explore the pre-deployed Developer Hub instance managed by Argo CD in the `pe-workshop` project.

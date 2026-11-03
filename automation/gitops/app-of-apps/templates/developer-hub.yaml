@@ -19,3 +19,17 @@ spec:
           namespace: {{ .Values.vault.namespace }}
           name: {{ .Values.vault.name }}
 {{ include "app-of-apps.syncPolicy" . | indent 2 }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+{{ include "app-of-apps.metadata" (dict "name" .Values.developerHub.name "namespace" .Values.argocd.namespace "syncWave" "3") }}
+spec:
+  project: pe-workshop
+  source:
+    repoURL: https://gitlab-gitlab.{{ .Values.cluster.subdomain }}/rhdh/ocp-pe-wkshp-rhdh-configs.git
+    targetRevision: main
+    path: base
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: {{ .Values.developerHub.namespace }}
+{{ include "app-of-apps.syncPolicy" . | indent 2 }}

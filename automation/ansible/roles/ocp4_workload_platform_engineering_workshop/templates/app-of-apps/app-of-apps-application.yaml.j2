@@ -11,6 +11,14 @@ spec:
     namespace: openshift-gitops
     server: https://kubernetes.default.svc
   project: default
+  # Attendees advance Developer Hub through configuration overlays during the workshop.
+  ignoreDifferences:
+    - group: argoproj.io
+      kind: Application
+      name: developer-hub
+      namespace: openshift-gitops
+      jsonPointers:
+        - /spec/source/path
   syncPolicy:
     automated:
       prune: true
