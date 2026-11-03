@@ -41,7 +41,9 @@ These three files are all you need to deploy and start customizing your internal
 
 === About Kustomize
 
-This workshop uses link:https://kustomize.io[Kustomize,window=kustomize_docs] https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/#bases-and-overlays[overlays,window=k8s_docs] to manage the layers of configuration that construct and enhance your internal developer portal. Argo CD supports both Kustomize and link:https://helm.sh[Helm,window=helm_docs] for rendering Kubernetes manifests, allowing us to use a set of base manifests to which we apply overrides per environment or per workshop module. We chose this approach to illustrate progressive enhancement of a Developer Hub deployment.
+This lab uses link:https://kustomize.io[Kustomize,window=kustomize_docs] https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/#bases-and-overlays[overlays,window=k8s_docs] to enable progressive enhancement of Developer Hub. Each module builds on the previous configuration, adding capabilities such as authentication, integrations, and catalog content without changing the base manifests.
+
+NOTE: Kustomize is a teaching choice for this lab, not a requirement for deploying or configuring Developer Hub in your own environment. You can use the configuration management approach that fits your platform. Argo CD also supports plain Kubernetes manifests and link:https://helm.sh[Helm,window=helm_docs].
 
 https://kustomize.io/[Kustomize,window=kustomize_docs] uses the declarations in the _kustomization.yaml_ file to "render" your configuration files. This becomes more powerful in later modules as we layer on additional configuration properties and files.
 
