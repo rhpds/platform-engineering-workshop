@@ -86,9 +86,7 @@ Now you will instruct Argo CD to deploy these manifests by creating an https://a
 
 . Open the **Argo CD** tab and log in if prompted:
 +
-* Click **Log in via OpenShift**, select the **developers** identity provider
-* Username: `pe1`
-* Password: `{common_password}`
+include::partial$argocd-login.adoc[]
 
 . Take a look at the Applications already on the dashboard. You will see entries like `app-of-apps`, `gitlab`, `keycloak`, `vault`, and others.
 +

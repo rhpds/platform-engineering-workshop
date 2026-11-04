@@ -40,15 +40,15 @@ Not every entity needs a hand-crafted YAML file, though. Providers (registered b
 
 == Exercise 1: Enable the Entities Overlay
 
-Parasol's Platform Team have already used generative AI to map out Entities corresponding to their existing domains, systems, APIs, and components. You will view these files in a moment, but first let's get Developer Hub to start ingesting them.
+Parasol's Platform Team have already used generative AI to map out Entities corresponding to their existing domains, systems, APIs, components, and resources across their broader software architecture -- including microservices, databases, and message queues. You will view these files in a moment, but first let's get Developer Hub to start ingesting them.
 
 . In the **Argo CD** tab, log in if prompted:
 +
-* Click **Log in via OpenShift**, select the **developers** identity provider
-* Username: `pe1`
-* Password: `{common_password}`
+include::partial$argocd-login.adoc[]
 
 . Click on your **developer-hub** Application
++
+image::m3/argocd-developer-hub-application.png[Argo CD Applications view with the developer-hub Application highlighted,link=self,window=blank,align="center",width=700,title="Select the developer-hub Application in Argo CD"]
 
 . Click **Details**, then **Manifest**, and enable **Edit** mode to change the **Path** to:
 +
@@ -56,15 +56,21 @@ Parasol's Platform Team have already used generative AI to map out Entities corr
 ----
 overlays/03-catalog-lightspeed-templates
 ----
++
+image::populate-catalog/argocd-application-details.png[Argo CD developer-hub Application with an arrow pointing to the Details button,link=self,window=blank,align="center",width=700,title="Open the developer-hub Application details"]
 . Click **Save** and Argo CD will begin syncing the new overlay
++
+image::populate-catalog/argo-manifest.png[Updating the Developer Hub Application's manifest to use a new overlay via Argo CD's UI,link=self,window=blank,align="center",width=700,title=Updating the Developer Hub Application's manifest to use a new overlay via Argo CD's UI]
 
 This overlay adds catalog locations, software templates, RBAC policies, and AI capabilities (Lightspeed with MCP). These additional capabilities will be explored in subsequent sections of this workshop.
 
-image::populate-catalog/argo-manifest.png[Updating the Developer Hub Application's manifest to use a new overlay via Argo CD's UI,link=self,window=blank,align="center",width=700,title=Updating the Developer Hub Application's manifest to use a new overlay via Argo CD's UI]
+Your edit to the Application configuration in Argo CD triggers a new Developer Hub deployment. Move on to the next section as it progresses.
 
 == Exercise 2: Explore Parasol's catalog entities repository
 
-While Developer Hub is deploying, let's take a look at the catalog entity definitions being imported.
+While Developer Hub is deploying, let's take a look at the catalog entity definitions being imported. These files describe Parasol's broader software architecture: business domains, systems made up of microservices, the APIs those services expose, and resources such as databases and message queues.
+
+NOTE: The repository might appear overwhelming at first, but it is mostly simple YAML definitions and Markdown documentation. Teams can build and maintain these files over time, with help from generative AI; they do not need to map the entire architecture at once.
 
 Parasol's catalog of entity definitions isn't just for human consumption -- it was also part of their AI strategy: structured, machine-readable documentation that AI assistants can query programmatically.
 
@@ -76,7 +82,7 @@ image::populate-catalog/gitlab-projectslist-entities.png[The `parasol-entities` 
 This is the **catalog index** -- a specialized Location entity that references all of Parasol's architecture definitions in the `spec.targets` array.
 . Explore the https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-entities/-/tree/main/techdocs/domains/billing-payments[techdocs/domains/billing-payments/,window=gitlab] directory to see how documentation can be stored
 +
-This directory contains Markdown documentation for the Billing & Payments domain, including PCI-DSS compliance information you will explore later. While this example stores documentation in a dedicated repository, teams can also store docs alongside their component's source code if they prefer.
+The `docs/` directory contains Markdown documentation for the Billing & Payments domain, including PCI-DSS compliance information you will explore later. While this example stores documentation in a dedicated repository, teams can also store docs alongside their component's source code if they prefer.
 
 . Open one of the component files, such as https://gitlab-gitlab.{openshift_cluster_ingress_domain}/parasol/parasol-entities/-/blob/main/components/parasol-catalog-claims.yaml[components/parasol-catalog-claims.yaml,window=gitlab]
 +
@@ -84,7 +90,7 @@ See how each component specifies its type, lifecycle, owner, system membership, 
 
 == Exercise 3: Explore the catalog in Developer Hub
 
-Developer Hub is now importing the entity definitions you just explored in GitLab.
+Developer Hub is now importing the entity definitions you just explored in GitLab. The Catalog provides a queryable, visual representation of those YAML files, so developers and agents can explore the architecture and its relationships without opening each file individually.
 
 [NOTE]
 ====
@@ -97,6 +103,8 @@ oc rollout status deployment/backstage-developer-hub -n rhdh
 ====
 
 . Open the **Developer Hub** tab and click the refresh icon at the top
++
+NOTE: If prompted to log in, use the **OIDC** sign-in option with username `pe1` and password `{common_password}`.
 
 . Navigate to the **Catalog** page
 
@@ -129,7 +137,7 @@ This is the catalog's power: it doesn't just list services, it models the relati
 . Set *Direction* to left to right and *Max Depth* to 3 to see even more relationships.
 +
 image::populate-catalog/relationships-graph.png["The API Gateway System relationships modeled with a depth of 3",link=self,window=blank,align="center",width=700,title="The API Gateway System relationships modeled with a depth of 3"]
-. Click **Docs** in the left navigation bar, and use the **Filters** to show *All documentation*
+. Now explore the documentation that explains the architecture and its rules. The Markdown files you saw in the repository are published in Developer Hub through **TechDocs**, alongside the catalog entities. Click **Docs** in the left navigation bar, and use the **Filters** to show *All documentation*
 
 . Click on **Billing & Payments** in the documentation index
 +
@@ -142,7 +150,7 @@ You are now viewing domain-level documentation that lives alongside the catalog 
 * **PCI-DSS compliance information** documenting how payment data is handled securely
 * **Onboarding guides** for developers joining the Billing team
 +
-Notice that this documentation is discoverable through the same interface developers use to find services and APIs. It's not buried in Confluence or a wiki -- it's registered in the catalog alongside the code.
+Notice that this documentation is discoverable through the same interface developers use to find services and APIs. It's not buried in Confluence or a wiki -- it's registered in the catalog alongside the code. Agents can read this documentation too, as you will see in the next exercise. For an example of how agents use catalog documentation to guide their decisions, see https://developers.redhat.com/articles/2026/09/15/red-hat-developer-hub-preventing-compliance-violations-ai-coding-agents[Red Hat Developer Hub: Preventing compliance violations with AI coding agents,window=rh_developer].
 
 == Exercise 4: Query the catalog with Lightspeed
 
@@ -157,9 +165,9 @@ The overlay you just deployed includes **Lightspeed** -- an AI assistant integra
 
 . Click the Lightspeed icon to open the chat interface
 . Use the three dots in the top-right of the Lightspeed interface and select *Fullscreen*
-. In the chat window, select the *VLLM > qwen3-235b-a22b* model
+. In the chat window, verify that the *qwen3-235b* model is selected
 +
-image::populate-catalog/lightspeed-model.png["Lightspeed UI shown with a Qwen3-235B-A22B model selected",link=self,window=blank,align="center",width=700,title="Lightspeed UI shown with a Qwen3-235B-A22B model selected"]
+image::populate-catalog/lightspeed-model.png["Lightspeed UI shown with the qwen3-235b model selected",link=self,window=blank,align="center",width=700,title="Lightspeed UI shown with the qwen3-235b model selected"]
 . Ask Lightspeed a question about compliance documentation:
 +
 [source,text,role="copypaste"]

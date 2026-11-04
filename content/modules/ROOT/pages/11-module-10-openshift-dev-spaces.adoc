@@ -87,9 +87,7 @@ EOF
 
 . Open the **Argo CD** tab. Log in if prompted:
 +
-* Click **Log in via OpenShift**, select the **developers** identity provider
-* Username: `pe1`
-* Password: `{common_password}`
+include::partial$argocd-login.adoc[]
 
 . Find the `openshift-dev-spaces` Application and click into it. Watch the sync progress -- Argo CD will deploy a CheCluster resource.
 +

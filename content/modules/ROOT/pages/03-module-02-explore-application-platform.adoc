@@ -52,12 +52,9 @@ Argo CD manages the cluster infrastructure using a pattern called https://argo-c
 
 . Select the **Argo CD** tab on the right
 
-. Log in using the **Log in via OpenShift** button, and selecting the **developers** identity provider.
+. Log in as the platform engineer (`pe1`):
 +
-* Username: `pe1`
-* Password: `{common_password}`
-+
-You may need to authorise access when prompted.
+include::partial$argocd-login.adoc[]
 
 . Once logged in, explore the Applications view. You will see the infrastructure apps that were deployed by the workshop environment:
 +

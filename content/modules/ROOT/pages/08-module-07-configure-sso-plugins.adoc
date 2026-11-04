@@ -42,11 +42,11 @@ You will also see how Kustomize overlays let you layer these additions on top of
 
 == Exercise 0: Switch to the SSO and plugins overlay
 
-The https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs/-/tree/main/overlays/02-sso-plugins[overlays/02-sso-plugins/,window=gitlab] directory builds on the base configuration by adding:
+The https://gitlab-gitlab.{openshift_cluster_ingress_domain}/rhdh/ocp-pe-wkshp-rhdh-configs/-/tree/main/overlays/02-sso-plugins[overlays/02-sso-plugins/,window=gitlab] directory builds on the base Developer Hub configuration by adding:
 
-* **OIDC authentication** via Keycloak -- users log in with their corporate identity
-* **Dynamic plugins** -- Tekton pipeline view, Argo CD deployment status, Kubernetes topology, GitLab integration, and a global header with links to platform tools
-* **ExternalSecrets** -- credentials for GitLab, Argo CD, and Kubernetes are pulled from Vault automatically, and used by Developer Hub plugins
+* **OIDC authentication** via Keycloak -- users log in with their corporate identity. Keycloak is pre-deployed for you in the workshop, as described in xref:01-details.adoc#_your_environment[Your environment]
+* **Dynamic plugins** -- Tekton pipeline view, Argo CD deployment status, Kubernetes topology, GitLab integration, and a global header with links to platform tools for developers' ease of access and discovery
+* **ExternalSecrets** -- credentials for GitLab, Argo CD, and Kubernetes are pulled from HashiCorp Vault automatically, and used by Developer Hub plugins
 
 You will update the Argo CD Application that manages Developer Hub using `oc patch` from the terminal -- the same way a platform engineer would in automation or a script.
 
@@ -59,7 +59,7 @@ oc get application developer-hub -n openshift-gitops -o jsonpath='{.spec.source.
 +
 You should see `base` -- the current overlay.
 
-. Patch the Application to point at the new overlay:
+. Patch the Application to point at the new configuration overlay:
 +
 [source,bash,role="execute",subs="attributes+"]
 ----
@@ -112,7 +112,7 @@ This same pattern is used for all five secrets in this overlay: Keycloak OIDC, G
 
 === Keycloak: the identity provider
 
-. Log in to the Keycloak admin console. Retrieve the admin credentials from the terminal:
+. Log in to the Keycloak admin console, which we pre-created for you in the workshop environment. Retrieve the admin credentials from the terminal:
 +
 [source,bash,role="execute",subs="attributes+"]
 ----
@@ -166,11 +166,13 @@ The file contains only references -- no sensitive values.
 
 TIP: The External Secrets are individual files in this example, however you could combine them into a single file for convenience.
 
-Every credential Developer Hub needs is pulled from Vault automatically. Nothing is hardcoded in Git. Rotating the credentials and updating them in Vault will result in any ExternalSecret reference also updating the Secret used by Developer Hub.
+Every credential Developer Hub needs is pulled from HashiCorp Vault automatically. Nothing is hardcoded in Git. Rotating the credentials and updating them in Vault will result in any ExternalSecret reference also updating the Secret used by Developer Hub.
 
-== Exercise 2: Log in with SSO
+== Exercise 2: Log in to Developer Hub with SSO
 
 Developer Hub is now configured with Keycloak OIDC authentication. Guest access is disabled.
+
+NOTE: Think of Keycloak as a stand-in for your own corporate SSO. We use it here to simplify the workshop while demonstrating how Developer Hub integrates with an identity provider.
 
 [NOTE]
 ====
@@ -205,15 +207,17 @@ With our chosen dynamic plugins enabled, Developer Hub now connects to the platf
 
 . Click on your identity in the top right corner, navigate to **Settings** and confirm your user identity is shown -- this is your Keycloak profile, synced into Developer Hub.
 +
-TIP: Use the *Pin Sidebar* toggle to make the sidebar collapse as seen in the following image.
+TIP: Use the *Pin Sidebar* toggle to make the sidebar smaller as seen in the following image.
 +
 image::rhdh-integrations/rhdh-user-setting.png["User Profile data is imported from Keycloak",link=self,window=blank,align="center",width=700,title="User Profile data is imported from Keycloak"]
 . Navigate to **Catalog** and switch the **Kind** filter to **User** or **Group**. You should see entities already appearing:
 +
-* **Keycloak user sync** -- Developer Hub is now importing users and groups from Keycloak automatically. The `dev1`, `dev2`, `pe1`, and `pe2` users and their groups (`developers`, `platformengineers`) should be visible as catalog entities.
+* **Keycloak user sync** -- Developer Hub is now importing users and groups from Keycloak automatically. The `dev1`, `dev2`, `pe1`, and `pe2` users and their groups (`developers`, `platformengineers`) should be visible as catalog entities. These User and Group entities can be assigned as owners of other items in the Catalog.
 +
 image::rhdh-integrations/synced-users.png["User Entities, synced into Developer Hub by the Keycloak integration",link=self,window=blank,align="center",width=700,title="User Entities, synced into Developer Hub by the Keycloak integration"]
 . Switch the **Kind** filter to **Component**. You should see the **parasol-insurance** component appear:
++
+NOTE: This is an existing application running on Parasol's infrastructure that Developer Hub automatically detected.
 +
 image::rhdh-integrations/parasol-insurance-component.png["The Parasol Insurance application has been ingested from GitLab",link=self,window=blank,align="center",width=700,title="The Parasol Insurance application has been ingested from GitLab"]
 +

@@ -1,0 +1,13 @@
+* Click **Log in via OpenShift**.
++
+image::argocd-login/login-openshift.png[Argo CD login page with the Log in via OpenShift button,link=self,window=blank,align="center",width=700,title="Log in to Argo CD via OpenShift"]
+* Select the **developers** identity provider.
++
+image::argocd-login/developers-provider.png[OpenShift login page with the developers identity provider,link=self,window=blank,align="center",width=700,title="Select the developers identity provider"]
++
+If prompted, enter username `pe1` and password `{common_password}`.
++
+NOTE: If you have already logged in to OpenShift, you might not be prompted for a username and password.
+* On the **Authorize Access** page, click **Allow selected permissions** to continue to Argo CD. If you have already granted access, this page might not appear again.
++
+image::argocd-login/allow-permissions.png[OpenShift authorization page with the Allow selected permissions button,link=self,window=blank,align="center",width=700,title="Allow selected permissions to access Argo CD"]
