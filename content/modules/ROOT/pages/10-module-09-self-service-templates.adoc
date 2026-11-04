@@ -37,6 +37,8 @@ By the end of this module, you will be able to:
 == Exercise 1: Explore the template
 
 . Open the **Developer Hub** tab and log in as `dev1` (password: `{common_password}`) if you are not already logged in as that user
++
+NOTE: If you are already logged in as `pe1`, click your username or profile icon in the top-right corner and log out, then log in as `dev1`.
 
 . Navigate to the **Create** page (or click the **Self-service** button in the global header)
 
