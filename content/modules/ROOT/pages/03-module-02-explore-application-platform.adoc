@@ -83,7 +83,7 @@ Parasol has already started migrating to **OpenShift Pipelines** (based on Tekto
 . Return to the **OCP Console** tab
 . Select **Pipelines > Pipelines** from the left navigation menu
 . Use the *Project* dropdown to select *parasol-insurance-build*
-. In the Pipelines list, locate the **parasol-insurance-tag** pipeline, then click the link in the **Last Run** column to view the most recent execution
+. In the Pipelines list, locate the **parasol-insurance-tag-promote** pipeline, then click the link in the **Last Run** column to view the most recent execution
 +
 This pipeline demonstrates Tekton's cloud-native approach to CI/CD. Each task runs in its own container, and the pipeline is defined as Kubernetes custom resources rather than scripted configuration. In later modules, you will see how software templates can generate similar pipelines automatically for new applications -- complete with security scanning, SBOM generation, and GitOps integration.
 +

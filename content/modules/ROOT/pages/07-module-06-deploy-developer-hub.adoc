@@ -70,11 +70,11 @@ oc get application developer-hub -n openshift-gitops -o json | jq .spec
 +
 Find these fields in the manifest:
 +
-* `spec.project: pe-workshop` -- the scoped Argo CD project used in this workshop
-* `spec.source.repoURL` -- the `rhdh/ocp-pe-wkshp-rhdh-configs` GitLab repository
-* `spec.source.targetRevision: main` and `spec.source.path: base` -- the branch and configuration directory Argo CD deploys
-* `spec.destination.namespace: rhdh` -- where Developer Hub runs
-* `spec.syncPolicy.automated.selfHeal: true` -- Argo CD automatically reconciles the deployment with Git
+* `project: pe-workshop` -- the scoped Argo CD project used in this workshop
+* `source.repoURL` -- the `rhdh/ocp-pe-wkshp-rhdh-configs` GitLab repository
+* `source.targetRevision: main` and `source.path: base` -- the branch and configuration directory Argo CD deploys
+* `destination.namespace: rhdh` -- where Developer Hub runs
+* `syncPolicy.automated.selfHeal: true` -- Argo CD automatically reconciles the deployment with Git
 
 . Open the **Argo CD** tab. Log in if prompted:
 +
