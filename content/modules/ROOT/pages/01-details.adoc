@@ -61,7 +61,23 @@ graph TD
 
 == How you will work
 
-You will primarily use a GitOps-driven configuration approach. This means you will use OpenShift GitOps to deploy and manage platform components. Don't worry if this is new to you -- it'll be explained as you follow the content. It essentially boils down to a set of YAML files in a Git repository being continuously reconciled against your OpenShift cluster. We're taking a production-like approach in this workshop! 😎
+You will primarily use a GitOps-driven configuration approach. This means you will use OpenShift GitOps to deploy and manage platform components. Its user interface is available in the **Argo CD** tab on the right. Don't worry if GitOps is new to you -- it'll be explained as you follow the content. It essentially boils down to a set of YAML files in a Git repository being continuously reconciled against your OpenShift cluster. We're taking a production-like approach in this workshop! 😎
+
+=== Using the tabs on the right
+
+The instructions stay on the left while you work with the workshop tools in the tabs on the right. Click a tab to switch tools as each exercise directs:
+
+* **OCP Console** -- The OpenShift Web Console for exploring cluster resources, Operators, and pipelines
+* **Argo CD** -- The OpenShift GitOps user interface for viewing Applications, changing their configuration, and checking deployment status
+* **Developer Hub** -- The developer portal you will configure and explore
+* **Vault** -- The secrets management interface
+* **Keycloak** -- The identity and SSO administration console
+* **GitLab** -- The source code, configuration, and catalog repositories
+* **Terminal** -- The workshop terminal for running commands
+
+image::workshop-tabs.png[Workshop tools in the tabs on the right,link=self,window=blank,align="center",width=700,title="Switch between workshop tools using the tabs on the right"]
+
+TIP: To reload a tool's page, click the refresh icon next to its tab name.
 
 === Executable terminal commands
 
