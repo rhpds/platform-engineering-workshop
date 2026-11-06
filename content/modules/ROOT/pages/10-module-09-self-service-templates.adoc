@@ -202,9 +202,19 @@ NOTE: Both dev and prod environments will show error states until the first buil
 +
 image::self-service/rhdh-topology.png[Production and Development applications in the Topology View, with Development environment Route, Service, and Pod details shown,link=self,window=blank,align="center",width=700,title="Production and Development applications in the Topology View, with Development environment Route, Service, and Pod details shown"]
 
-. Return to the **CI** tab after the build completes to review the scan results. The build attaches a vulnerability report and lists the detected CVEs (Common Vulnerabilities and Exposures), grouped by severity, alongside the PipelineRun. In this example, we intentionally use older dependencies to illustrate the vulnerability scan in action.
+. In the **Topology** view, open the **Route** for the `parasol-chatbot-dev` application. This is your application running on OpenShift. When you push changes to the `main` branch, the build pipeline runs and the dev application redeploys automatically. It is also a sample app that uses Retrieval-Augmented Generation (RAG), so try asking it a question such as "What's the rental cancellation window?" and it will answer based on real policy data (stored in a file in your source repository for simplicity)
++
+image::self-service/parasol-chatbot-application.png[Parasol chatbot sample application running on OpenShift,link=self,window=blank,align="center",width=700,title=Parasol chatbot application]
+
+. Return to the **CI** tab in Developer Hub. The build attaches a vulnerability report and lists the detected CVEs (Common Vulnerabilities and Exposures), grouped by severity, alongside the PipelineRun. In this example, we intentionally use older dependencies to illustrate the vulnerability scan in action.
 +
 image::self-service/rhdh-ci-vulnerabilities.png[Completed PipelineRun in Developer Hub showing vulnerability counts by severity and the attached report,link=self,window=blank,align="center",width=700,title=Build scan results and vulnerability report in Developer Hub]
++
+TIP: If you cannot see the **View Output** button, make the Developer Hub browser window wider.
+
+. Click **View Output** on the completed PipelineRun, then review the **Advanced Cluster Security** image scan results. The report lists each CVE, the affected dependency and its current version, and a fixed version when one is available. Use the fixed version to identify how to remediate vulnerable dependencies. The developer didn't need to manually configure any of this, and the organisation can enforce policies to prevent deployments that contain specific CVEs or breach other policy rules.
++
+image::self-service/rhdh-acs-image-scan-report.png[Advanced Cluster Security image scan report showing CVEs, affected dependencies, current versions, and fixed versions,link=self,window=blank,align="center",width=700,title=Advanced Cluster Security scan results in Developer Hub]
 
 == Module summary
 
