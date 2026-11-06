@@ -11,3 +11,4 @@
 * xref:09-module-08-populate-catalog.adoc[8. Build Context for Agents and Developers]
 * xref:10-module-09-self-service-templates.adoc[9. Enable self-service with templates]
 * xref:11-module-10-openshift-dev-spaces.adoc[10. Enable a Cloud IDE for developers]
+* xref:12-troubleshooting.adoc[Troubleshooting]

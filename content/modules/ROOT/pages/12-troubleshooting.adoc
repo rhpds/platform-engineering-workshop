@@ -1,0 +1,64 @@
+= Troubleshooting
+:source-highlighter: rouge
+:toc: macro
+:toclevels: 2
+
+toc::[]
+
+== Developer Hub is stuck waiting for a plugin installation lock
+
+After changing the Developer Hub overlay in Argo CD, the new pod may remain in initialization with this message in the `install-dynamic-plugins` init container logs:
+
+[source,text]
+----
+======= Waiting for lock release (file: /dynamic-plugins-root/install-dynamic-plugins.lock)...
+----
+
+An interrupted plugin installation can leave a stale lock file on the persistent plugin volume. The next installer waits for that file to disappear before continuing.
+
+=== Clear the stale lock
+
+Use this recovery only when the installer is stuck on the message above and no other pod is actively installing plugins into the same volume. In the workshop's single-replica Developer Hub deployment, you can remove the stale file from the running init container without disabling Argo CD auto-sync or self-heal, scaling down, or creating a cleanup pod.
+
+. Open the terminal and make sure you are logged into your workshop cluster with permission to execute commands in pods in the `rhdh` namespace.
+. Check the Developer Hub pod and installer logs:
++
+[source,bash,role="copypaste"]
+----
+oc -n rhdh get pods -l rhdh.redhat.com/app=backstage-developer-hub
+oc -n rhdh logs deployment/backstage-developer-hub -c install-dynamic-plugins --tail=30
+----
+. If the installer is waiting on a stale lock, run this one-liner to clear it and wait up to ten minutes for the pod to become ready:
++
+[source,bash,role="copypaste"]
+----
+oc -n rhdh exec deployment/backstage-developer-hub -c install-dynamic-plugins -- rm -f /dynamic-plugins-root/install-dynamic-plugins.lock && oc -n rhdh wait pod -l rhdh.redhat.com/app=backstage-developer-hub --for=condition=Ready --timeout=600s
+----
++
+The installer checks for the lock every second and resumes automatically once it disappears.
+
+IMPORTANT: Do not run the lock removal again while plugins are installing. The installer creates a new lock to protect the active installation.
+
+=== The deployment exceeded its progress deadline
+
+If you used `oc rollout status` after clearing the lock, you may see:
+
+[source,text]
+----
+error: deployment "backstage-developer-hub" exceeded its progress deadline
+----
+
+The deployment may have exceeded its progress deadline while waiting for the stale lock. This error does not mean lock removal failed. If the logs show plugin installation progressing, let it finish and wait directly for pod readiness:
+
+[source,bash,role="copypaste"]
+----
+oc -n rhdh wait pod -l rhdh.redhat.com/app=backstage-developer-hub --for=condition=Ready --timeout=600s
+----
+
+If that wait also times out, inspect the installer logs and pod events for a new error before taking further action:
+
+[source,bash,role="copypaste"]
+----
+oc -n rhdh logs deployment/backstage-developer-hub -c install-dynamic-plugins --tail=100
+oc -n rhdh describe pods -l rhdh.redhat.com/app=backstage-developer-hub
+----

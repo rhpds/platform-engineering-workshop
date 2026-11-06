@@ -172,7 +172,7 @@ image::populate-catalog/lightspeed-model.png["Lightspeed UI shown with the qwen3
 +
 [source,text,role="copypaste"]
 ----
-How does Parasol handle PCI compliance? Perhaps we have documentation about billing and payments in the catalog?
+How does Parasol handle PCI compliance? Perhaps we have documentation about billing and payments in the catalog? Summarize it for me.
 ----
 +
 TIP: Be patient as the model responds. You're using a shared model hosted on our internal platform; sometimes it's under load.
